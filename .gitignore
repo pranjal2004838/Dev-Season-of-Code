@@ -1,6 +1,12 @@
 node_modules/
 dist/
 .env
+.env.local
+.env.*.local
 *.local
 test-results/
 playwright-report/
+
+# Security: NEVER commit API keys/secrets
+.DS_Store
+.vscode/*.json

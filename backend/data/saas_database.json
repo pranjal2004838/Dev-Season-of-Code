@@ -1,0 +1,22 @@
+[
+  { "id": 1, "name": "Copper CRM", "category": "CRM", "typical_price": 50, "risk_level": "high", "data_permissions": ["contacts","emails","calendar"], "keywords": ["copper","app.copper.com"] },
+  { "id": 2, "name": "Figma Pro", "category": "Design", "typical_price": 15, "risk_level": "medium", "data_permissions": ["files","designs"], "keywords": ["figma","figma.com"] },
+  { "id": 3, "name": "ChatGPT Pro", "category": "AI Tools", "typical_price": 20, "risk_level": "medium", "data_permissions": ["conversations","prompts"], "keywords": ["chatgpt","chat.openai.com","openai"] },
+  { "id": 4, "name": "Jasper.ai", "category": "AI Tools", "typical_price": 50, "risk_level": "medium", "data_permissions": ["content","brand_voice"], "keywords": ["jasper","jasper.ai"] },
+  { "id": 5, "name": "Copy.ai", "category": "AI Tools", "typical_price": 50, "risk_level": "low", "data_permissions": ["content"], "keywords": ["copy.ai","copy ai"] },
+  { "id": 6, "name": "Expensify", "category": "Finance", "typical_price": 25, "risk_level": "high", "data_permissions": ["receipts","bank_info","expense_data"], "keywords": ["expensify"] },
+  { "id": 7, "name": "Recruiting Bot", "category": "HR", "typical_price": 30, "risk_level": "critical", "data_permissions": ["employee_phones","resumes","pii"], "keywords": ["recruiting bot","recruiting"] },
+  { "id": 8, "name": "Slack", "category": "Communication", "typical_price": 8, "risk_level": "low", "data_permissions": ["messages","files"], "keywords": ["slack","app.slack.com"] },
+  { "id": 9, "name": "Salesforce", "category": "CRM", "typical_price": 75, "risk_level": "low", "data_permissions": ["contacts","deals","reports"], "keywords": ["salesforce"] },
+  { "id": 10, "name": "HubSpot", "category": "CRM", "typical_price": 45, "risk_level": "low", "data_permissions": ["contacts","marketing"], "keywords": ["hubspot"] },
+  { "id": 11, "name": "Canva Pro", "category": "Design", "typical_price": 13, "risk_level": "low", "data_permissions": ["designs"], "keywords": ["canva"] },
+  { "id": 12, "name": "Adobe CC", "category": "Design", "typical_price": 55, "risk_level": "low", "data_permissions": ["files","designs"], "keywords": ["adobe","creative cloud"] },
+  { "id": 13, "name": "Asana", "category": "Project Management", "typical_price": 11, "risk_level": "low", "data_permissions": ["tasks","projects"], "keywords": ["asana","app.asana.com"] },
+  { "id": 14, "name": "Monday.com", "category": "Project Management", "typical_price": 10, "risk_level": "low", "data_permissions": ["tasks","projects"], "keywords": ["monday","monday.com","app.monday.com"] },
+  { "id": 15, "name": "Trello", "category": "Project Management", "typical_price": 10, "risk_level": "low", "data_permissions": ["boards","tasks"], "keywords": ["trello"] },
+  { "id": 16, "name": "Notion", "category": "Productivity", "typical_price": 10, "risk_level": "low", "data_permissions": ["docs","databases"], "keywords": ["notion"] },
+  { "id": 17, "name": "Dropbox Business", "category": "Storage", "typical_price": 15, "risk_level": "medium", "data_permissions": ["files","shared_folders"], "keywords": ["dropbox"] },
+  { "id": 18, "name": "Google Workspace", "category": "Productivity", "typical_price": 12, "risk_level": "low", "data_permissions": ["email","docs","drive"], "keywords": ["google","accounts.google.com","myaccount.google.com"] },
+  { "id": 19, "name": "Zoom", "category": "Communication", "typical_price": 14, "risk_level": "low", "data_permissions": ["meetings","recordings"], "keywords": ["zoom"] },
+  { "id": 20, "name": "Microsoft 365", "category": "Productivity", "typical_price": 12, "risk_level": "low", "data_permissions": ["email","docs","teams"], "keywords": ["microsoft","office365","outlook"] }
+]

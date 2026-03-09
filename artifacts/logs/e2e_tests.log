@@ -1,0 +1,6 @@
+
+Running 1 test using 1 worker
+
+  ✓  1 [chromium] › tests/e2e/playwright.spec.ts:18:7 › Shadow SaaS Detector E2E › full workflow: upload → playbook → simulator (6.5s)
+
+  1 passed (8.1s)

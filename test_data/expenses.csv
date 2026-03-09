@@ -1,0 +1,14 @@
+Date,Employee,Department,Amount,Description,Category
+2026-01-15,john.smith,Sales,50,Copper CRM Monthly Subscription,Software
+2026-01-16,sarah.jones,Design,120,Figma Pro Annual Payment,Software
+2026-01-18,alice.brown,Marketing,20,ChatGPT Pro Subscription,Software
+2026-01-19,bob.wilson,Marketing,50,Jasper.ai Monthly,Software
+2026-01-20,carol.white,Marketing,50,Copy.ai Monthly Subscription,Software
+2026-01-22,david.lee,Finance,25,Expensify License Renewal,Software
+2026-01-25,emma.wilson,HR,30,Recruiting Bot Tool License,Software
+2026-01-28,team.all,Office,100,Slack Team Plan Monthly,Software
+2026-02-01,john.smith,Sales,50,Copper CRM Monthly Subscription,Software
+2026-02-05,sarah.jones,Design,60,Figma Pro Monthly,Software
+2026-02-10,alice.brown,Marketing,20,ChatGPT Pro Subscription,Software
+2026-02-15,bob.wilson,Marketing,50,Jasper.ai Monthly,Software
+2026-02-18,carol.white,Marketing,50,Copy.ai Monthly Subscription,Software

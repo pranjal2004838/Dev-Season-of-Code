@@ -25,7 +25,7 @@ app.use('/api/playbook', playbookRoutes);
 app.use('/api/ai', aiRoutes);
 
 // Serve test_data for demo
-app.use('/test_data', express.static(path.join(__dirname, '..', 'test_data')));
+app.use('/test_data', express.static(path.join(__dirname, '../../test_data')));
 
 // Health check
 app.get('/api/health', (_req, res) => {

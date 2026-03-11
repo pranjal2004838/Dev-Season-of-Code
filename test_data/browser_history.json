@@ -89,6 +89,111 @@
       "url": "https://app.monday.com/board/123456",
       "title": "Monday.com - Board View",
       "timestamp": "2026-02-03T10:20:00Z"
+    },
+    {
+      "url": "https://app.datadoghq.com/dashboard",
+      "title": "Datadog - Dashboard",
+      "timestamp": "2026-02-05T09:00:00Z"
+    },
+    {
+      "url": "https://sentry.io/issues/",
+      "title": "Sentry - Issues",
+      "timestamp": "2026-02-06T11:30:00Z"
+    },
+    {
+      "url": "https://zendesk.com/agent/tickets",
+      "title": "Zendesk - Support Tickets",
+      "timestamp": "2026-02-07T14:00:00Z"
+    },
+    {
+      "url": "https://hootsuite.com/dashboard",
+      "title": "Hootsuite - Social Dashboard",
+      "timestamp": "2026-02-08T10:00:00Z"
+    },
+    {
+      "url": "https://gusto.com/payroll",
+      "title": "Gusto - Payroll",
+      "timestamp": "2026-02-09T08:30:00Z"
+    },
+    {
+      "url": "https://zapier.com/editor",
+      "title": "Zapier - Workflow Editor",
+      "timestamp": "2026-02-10T13:00:00Z"
+    },
+    {
+      "url": "https://loom.com/my-videos",
+      "title": "Loom - My Videos",
+      "timestamp": "2026-02-11T15:00:00Z"
+    },
+    {
+      "url": "https://miro.com/app/board/abc123",
+      "title": "Miro - Whiteboard",
+      "timestamp": "2026-02-12T10:30:00Z"
+    },
+    {
+      "url": "https://notion.so/workspace",
+      "title": "Notion - Team Workspace",
+      "timestamp": "2026-02-13T09:15:00Z"
+    },
+    {
+      "url": "https://calendly.com/event-types",
+      "title": "Calendly - Event Types",
+      "timestamp": "2026-02-14T11:00:00Z"
+    },
+    {
+      "url": "https://airtable.com/app123/tbl456",
+      "title": "Airtable - CRM Database",
+      "timestamp": "2026-02-15T14:30:00Z"
+    },
+    {
+      "url": "https://docusign.com/documents",
+      "title": "DocuSign - Documents",
+      "timestamp": "2026-02-16T10:00:00Z"
+    },
+    {
+      "url": "https://grammarly.com/settings",
+      "title": "Grammarly - Business Settings",
+      "timestamp": "2026-02-17T09:00:00Z"
+    },
+    {
+      "url": "https://claude.ai/chat",
+      "title": "Claude - AI Chat",
+      "timestamp": "2026-02-18T11:00:00Z"
+    },
+    {
+      "url": "https://discord.com/channels/server123",
+      "title": "Discord - Team Channel",
+      "timestamp": "2026-02-19T16:00:00Z"
+    },
+    {
+      "url": "https://dropbox.com/home",
+      "title": "Dropbox - Files",
+      "timestamp": "2026-02-20T13:45:00Z"
+    },
+    {
+      "url": "https://canva.com/design",
+      "title": "Canva - Design Studio",
+      "timestamp": "2026-02-21T10:30:00Z"
+    },
+    {
+      "url": "https://trello.com/b/board123",
+      "title": "Trello - Sprint Board",
+      "timestamp": "2026-02-22T09:00:00Z"
+    },
+    {
+      "url": "https://hotjar.com/sites/123/dashboard",
+      "title": "Hotjar - Heatmaps Dashboard",
+      "timestamp": "2026-02-23T14:00:00Z"
+    },
+    {
+      "url": "https://pipedrive.com/pipeline",
+      "title": "Pipedrive - Sales Pipeline",
+      "timestamp": "2026-02-24T10:00:00Z"
+    },
+    {
+      "url": "https://postman.co/workspace",
+      "title": "Postman - API Collections",
+      "timestamp": "2026-02-25T11:30:00Z"
     }
   ]
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import Simulator from './components/Simulator';
 import AIInsights from './components/AIInsights';
+import ThreatTicker from './components/ThreatTicker';
 import DemoStory from './pages/DemoStory';
 import Toast from './components/Toast';
 import type { DetectedApp } from './services/api';
@@ -20,9 +21,20 @@ export default function App() {
 
       {/* Header */}
       <header className="app-header">
-        <h1>🔍 Shadow SaaS Detector</h1>
-        <span className="demo-badge">Demo Mode</span>
+        <div className="app-header-left">
+          <h1>🔍 Shadow SaaS Detector</h1>
+          <span className="header-tagline">Enterprise Shadow IT Discovery & Compliance Platform</span>
+        </div>
+        <div className="app-header-right">
+          <span className="demo-badge">Demo Mode</span>
+          {detectedApps.length > 0 && (
+            <span className="app-count-badge">{detectedApps.length} apps found</span>
+          )}
+        </div>
       </header>
+
+      {/* Live Threat Ticker */}
+      <ThreatTicker detectedApps={detectedApps} />
 
       {/* Navigation */}
       <nav className="nav-tabs">

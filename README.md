@@ -1,253 +1,221 @@
-# 🔍 Shadow SaaS Detector - Complete Hackathon Project Guide
+# 🔍 Shadow SaaS Detector
 
-You have all the information to build a winning hackathon project. Here's your quick reference.
+**Discover, assess, and eliminate unauthorized SaaS sprawl across your organization — before it becomes a security breach.**
 
----
+> Companies lose **$1,000+/month** to shadow IT — unauthorized apps with access to PII, financial data, and credentials that nobody in IT knows about. Shadow SaaS Detector finds them all in seconds.
 
-## 📚 DOCUMENTATION FILES IN THIS REPO
-
-1. **PROJECT_BRIEF.md** ← START HERE
-   - Real-life example (Emma's story)
-   - Complete problem explanation
-   - What the final product looks like
-   - Why this will win
-
-2. **TECH_SETUP.md** ← Read next
-   - Technology explanations (what each tool does)
-   - Installation instructions
-   - File structure
-   - Sample code snippets
-
-3. **8_DAY_ROADMAP.md** ← Follow this day-by-day
-   - Exact breakdown: hour-by-hour
-   - What to code each day
-   - Code snippets for each feature
-   - Deployment instructions
-
-4. **test_data/** ← Use to test
-   - expenses.csv (sample spending data)
-   - browser_history.json (sample browser history)
-   - roster.csv (sample company roster)
+![Dashboard](artifacts/screenshots/04-dashboard-full.png)
 
 ---
 
-## ⚡ QUICK START (If You Know the Idea, Read This)
+## The Problem
 
-### The Problem
-Startups lose $300-500/month to unauthorized SaaS tools employees use without approval:
-- John secretly uses Copper CRM ($50/month)
-- Sarah uses Figma ($120/month) instead of team plan
-- Marketing uses 3 different AI tools ($150/month)
-- HR tool has access to employee phone numbers (SECURITY RISK)
+Every organization has shadow IT. Employees sign up for SaaS tools without IT approval:
 
-**Result:** Money wasted, data exposed, compliance violated.
+- **Finance** uses 3 different expense tools — only 1 is approved
+- **Marketing** has AI writing tools with access to customer data
+- **Engineering** stores credentials in unauthorized password managers
+- **HR** tools expose employee SSNs and phone numbers
 
-### The Solution
-Users upload:
-- Expense reports (CSV)
-- Browser history (JSON)  
-- OAuth apps list (JSON)
+**The result:** Wasted budget, data exposure, GDPR/CCPA violations, and zero visibility.
 
-Your tool detects:
-- What unauthorized SaaS is being used
-- Which ones are risky (data permissions)
-- Duplicate tools (consolidation opportunity)
-- How much money to save
+## The Solution
 
-Users get:
-- Beautiful dashboard with risk scores
-- Recommendations (block, consolidate, approve)
-- PDF report showing savings opportunity
-- Department-level breakdown
+Shadow SaaS Detector connects to your organization's data sources and instantly surfaces every unauthorized tool, scores its risk, and gives you a step-by-step playbook to remediate — all powered by AI.
 
-### Tech Stack
-```
-Frontend:  React.js (UI, file upload, dashboard)
-Backend:   Node.js + Express (processing, detection)
-Database:  JSON file (SaaS app database)
-Deploy:    Vercel (frontend), Heroku (backend)
-```
+### One-Click Connect
 
-### 8-Day Timeline
-```
-Day 1: Setup + Database (8h)
-Day 2: Upload Form UI (8h)
-Day 3: Detection Engine (8h)
-Day 4: Recommendations (8h)
-Day 5: Dashboard UI (8h)
-Day 6: Export + Polish (8h)
-Day 7: Demo + Docs (8h)
-Day 8: Deploy + Submit (8h)
-─────────────────────────────
-Total: 64 hours → Hackathon Win!
-```
+No manual uploads. Connect your Google Workspace, Microsoft 365, and expense systems with a single click. The detector scans across all sources simultaneously.
 
----
+![Connect Your Tools](artifacts/screenshots/01-connect-tools.png)
 
-## 🚀 HOW TO WIN
+![Scanning in Progress](artifacts/screenshots/02-scanning.png)
 
-### 1. **Judges Care About (in order):**
-1. **Does it solve a real problem?** YES - Emma's problem is real for 100K+ IT managers
-2. **Does it work end-to-end?** YES - Upload file → See results → Download report
-3. **Is it polished?** YES - Beautiful UI + no bugs
-4. **Is it marketable?** YES - $50-100/month SaaS for SMBs
-5. **Is code quality good?** YES - Clean, documented, easy to understand
+### Comprehensive Detection
 
-### 2. **How to Stand Out:**
-- ✅ Focus on depth, not breadth (perfect for one use case)
-- ✅ Show real impact (demo saves $320/month)
-- ✅ Tell a story (Emma's problem → your solution → her savings)
-- ✅ Polish the UI (beautiful = memorable)
-- ✅ Make demo 2-3 minutes (not longer)
+Cross-references expense reports, browser history, and OAuth grants against a database of **100+ known SaaS applications** across 24 categories. Detects apps that individual signals would miss.
 
-### 3. **Don't Waste Time On:**
-- ❌ AI/ML (judges don't care, complex to build)
-- ❌ Perfect database (JSON file is enough)
-- ❌ User authentication (not needed for MVP)
-- ❌ Mobile app (web is enough)
-- ❌ Complex architecture (simple = better)
+![Dashboard Stats](artifacts/screenshots/03-dashboard-stats.png)
+
+### AI-Powered Risk Assessment
+
+Every detected app receives a risk score based on data access permissions, compliance posture, and organizational exposure. Powered by Google Gemini with intelligent rule-based fallback.
+
+![AI Risk Assessment](artifacts/screenshots/07-ai-risk.png)
+
+### Compliance Audit
+
+Automated GDPR, CCPA, SOC 2, and HIPAA compliance checking with exportable PDF and Markdown reports for auditors and legal teams.
+
+![Compliance Audit](artifacts/screenshots/08-ai-compliance.png)
+
+### Smart Consolidation
+
+AI identifies redundant tools across departments and recommends consolidation — with projected annual savings calculated automatically.
+
+![Smart Consolidation](artifacts/screenshots/09-ai-consolidation.png)
+
+### Remediation Playbooks
+
+Every high-risk app gets a step-by-step playbook: notify the user, migrate data, revoke access, verify removal. One-click simulated revocation with undo support.
+
+![Playbook Modal](artifacts/screenshots/05-playbook-modal.png)
+
+### Cost Savings Simulator
+
+Interactive simulator lets IT leaders model different remediation scenarios and see projected monthly/annual savings in real time.
+
+![Simulator](artifacts/screenshots/06-simulator.png)
+
+### Live Threat Feed
+
+Real-time ticker showing active threats as they're detected — PII exposure warnings, credential risks, unauthorized data access, and compliance violations.
 
 ---
 
-## 📋 BEFORE YOU START
+## Key Metrics
 
-### Prerequisites (Stuff to Know)
-- [ ] Basic JavaScript (variables, functions, loops)
-- [ ] HTML/CSS basics (forms, styling)
-- [ ] Git/GitHub (to submit code)
-- [ ] Terminal commands (npm, node, git)
-
-**Don't know these?** YouTube 2-hour courses exist for each. You have 8 days.
-
-### Tools to Install
-- [ ] Node.js (includes npm)
-- [ ] Code editor (VS Code) ✓ You have this
-- [ ] Git command line
-- [ ] GitHub account (free)
-- [ ] Heroku account (free tier)
-- [ ] Vercel account (free tier)
-
-### Test Data Ready
-I've created sample files for you:
-```
-test_data/
-├── expenses.csv         (13 rows, expense report)
-├── browser_history.json (18 entries, browser history)
-└── roster.csv           (10 employees)
-```
-Use these to test without real company data.
+| Metric | Value |
+|--------|-------|
+| SaaS apps in database | **100+** across 24 categories |
+| Detection sources | Expense reports, browser history, OAuth grants |
+| Risk levels scored | Critical, High, Medium, Low |
+| Compliance frameworks | GDPR, CCPA, SOC 2, HIPAA |
+| Export formats | PDF, Markdown |
+| Unit tests | **17 passing** |
+| E2E tests | Playwright automated |
 
 ---
 
-## 🎯 EXECUTION PLAN
+## Tech Stack
 
-### Week Structure (If you have 8 days)
-```
-Day 1-2: Build foundation (setup + upload)
-Day 3-5: Build logic (detection + UI)
-Day 6-7: Polish + demo
-Day 8: Deploy + submit
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 19, TypeScript 5.9, Vite 7, Recharts |
+| Backend | Node.js, Express, TypeScript |
+| AI Engine | Google Gemini 1.5 Flash (with rule-based fallback) |
+| Testing | Vitest (unit), Playwright (e2e) |
+| Deployment | Render (full-stack) |
 
-Each day: 8 hours focused work
-Take breaks, stay hydrated, celebrate wins!
-```
+---
 
-### Daily Checklist Template
+## Architecture
+
 ```
-Day N:
-[ ] Read hour-by-hour plan in 8_DAY_ROADMAP.md
-[ ] Code each hour step
-[ ] Test at end of day
-[ ] Git commit with message
-[ ] Note any blockers
+┌─────────────────────────────────────────────────┐
+│                   Frontend (React)               │
+│  ┌──────────┐ ┌──────────┐ ┌──────────────────┐ │
+│  │Dashboard │ │Simulator │ │   AI Insights    │ │
+│  │ + Charts │ │          │ │Risk│Comply│Consol│ │
+│  └────┬─────┘ └────┬─────┘ └────────┬─────────┘ │
+│       │             │                │           │
+│       └─────────────┼────────────────┘           │
+│                     │ REST API                   │
+├─────────────────────┼───────────────────────────-┤
+│                   Backend (Express)              │
+│  ┌──────────┐ ┌──────────┐ ┌──────────────────┐ │
+│  │Detector  │ │Simulator │ │   AI Services    │ │
+│  │ Engine   │ │ Engine   │ │Scorer│Audit│Merge│ │
+│  └────┬─────┘ └──────────┘ └────────┬─────────┘ │
+│       │                              │           │
+│  ┌────┴─────┐                 ┌──────┴─────────┐ │
+│  │SaaS DB   │                 │ Google Gemini  │ │
+│  │(100 apps)│                 │ 1.5 Flash API  │ │
+│  └──────────┘                 └────────────────┘ │
+└──────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 💻 GETTING STARTED NOW
+## Getting Started
 
-### Step 1: Read the Full Brief (15 min)
-Open PROJECT_BRIEF.md in your editor and read the Emma's story section.
+### Prerequisites
 
-### Step 2: Understand the Tech (30 min)
-Read TECH_SETUP.md to learn what each technology does.
+- Node.js 18+
+- npm 9+
 
-### Step 3: Follow Day 1 Instructions (8 hours)
-Open 8_DAY_ROADMAP.md and follow the Day 1 section exactly.
+### Installation
 
-### Step 4: Use Sample Data to Test (During coding)
-The test_data/ folder has ready-to-use sample CSV/JSON files.
+```bash
+# Clone the repository
+git clone https://github.com/pranjal2004838/shadow-SaaS-detector.git
+cd shadow-SaaS-detector
 
----
+# Install all dependencies
+npm install
+cd frontend && npm install && cd ..
+cd backend && npm install && cd ..
+```
 
-## 🔑 KEY SUCCESS FACTORS
+### Running Locally
 
-### 1. **Keep It Simple**
-- Don't add ML, blockchain, cryptocurrencies
-- Pattern matching + rule engine = winner
-- Focus on UX/story, not complexity
+```bash
+# Terminal 1 — Backend (port 5000)
+cd backend
+npx ts-node server.ts
 
-### 2. **Demo Everything Visually**
-Judges watch videos. Make yours:
-- Beautiful (good colors, fonts, layout)
-- Clear (pain → solution path)
-- Concise (2-3 minutes only)
+# Terminal 2 — Frontend (port 3000)
+cd frontend
+npm run dev
+```
 
-### 3. **Polish the UI**
-Spend 6-8 hours on design.
-- Consistent colors (check out Tailwind CSS)
-- Clear labels and icons
-- Mobile responsive
-- Fast (no 10-second loads)
+Open **http://localhost:3000** in your browser.
 
-### 4. **Write Great Documentation**
-Judges read READMEs.
-Include: Problem, Solution, Tech Stack, How to Run, Features
+### Environment Variables (Optional)
 
-### 5. **Show Metrics**
-Judges love numbers:
-- "Saves $300-800/month"
-- "Detects 500+ SaaS apps"
-- "Identifies high-risk data access"
+Create `backend/.env.local` for AI-powered analysis:
 
----
+```env
+GEMINI_API_KEY=your_google_gemini_api_key
+```
 
-## ✅ SUBMISSION CHECKLIST (Day 8)
+Without the API key, all AI features use intelligent rule-based analysis (fully functional).
 
-Before clicking submit:
+### Running Tests
 
-**Code:**
-- [ ] GitHub repo has clean code
-- [ ] README is complete
-- [ ] No broken code
+```bash
+# Unit tests
+npm test
 
-**Deployment:**
-- [ ] Frontend deployed to Vercel
-- [ ] Backend deployed to Heroku
-- [ ] Both URLs work
-
-**Demo:**
-- [ ] Video recorded (2-3 min)
-- [ ] Uploaded to YouTube
-
-**Submission Form:**
-- [ ] Project title filled
-- [ ] Problem statement clear
-- [ ] All URLs work
-- [ ] Screenshot included
+# E2E tests
+npx playwright test
+```
 
 ---
 
-## 📖 READING ORDER
+## Project Structure
 
-If this is your first time:
-1. **PROJECT_BRIEF.md** (understand the problem)
-2. **This page** (overview)
-3. **TECH_SETUP.md** (tech basics)
-4. **8_DAY_ROADMAP.md** (start building)
-5. **test_data/** (for testing)
+```
+├── frontend/              # React SPA
+│   └── src/
+│       ├── components/    # Dashboard, Simulator, AIInsights, Charts
+│       ├── services/      # API client
+│       └── pages/         # Demo story
+├── backend/               # Express API server
+│   ├── routes/            # upload, simulate, playbook, ai
+│   ├── services/          # detector, simulator, AI engines
+│   └── data/              # SaaS database (100 apps)
+├── test_data/             # Demo data (expenses, browser history, roster)
+└── tests/                 # Unit + E2E test suites
+```
 
-**Estimated time to understand: 2 hours**  
+---
+
+## Demo
+
+1. Click **"Connect Google Workspace"** on the dashboard
+2. Watch the real-time scanning animation
+3. Explore **35 detected shadow apps** across 17 categories
+4. Click any app's **"Playbook"** button for remediation steps
+5. Switch to **Simulator** to model cost savings
+6. Open **AI Insights** for risk scores, compliance audit, and consolidation recommendations
+7. **Export** the compliance report as PDF or Markdown
+
+---
+
+## License
+
+MIT
 **Estimated time to build: 64 hours (8 days)**  
 **Estimated prize: $750-2,000**  
 

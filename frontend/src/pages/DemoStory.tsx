@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { uploadFiles, type DetectedApp } from '../services/api';
-import PlaybookModal from '../components/PlaybookModal';
 import Simulator from '../components/Simulator';
 import { showToast } from '../components/Toast';
 
@@ -19,7 +18,6 @@ type DemoStep =
 export default function DemoStory() {
   const [step, setStep] = useState<DemoStep>('problem');
   const [detectedApps, setDetectedApps] = useState<DetectedApp[]>([]);
-  const [selectedApp, setSelectedApp] = useState<DetectedApp | null>(null);
   const [autoPlay, setAutoPlay] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -89,7 +87,7 @@ export default function DemoStory() {
   const highRisks = detectedApps.filter((a) => a.risk_level === 'high');
   const totalSpend = detectedApps.reduce((sum, app) => sum + app.typical_price, 0);
   const potentialSavings = Math.round((totalSpend / 1005) * 500); // Scale based on demo
-  const complianceAtRisk = detectedApps.filter((a) => a.permissions?.includes('PII') || a.permissions?.includes('SSN')).length;
+  const complianceAtRisk = detectedApps.filter((a) => a.data_permissions?.some((p) => p.includes('PII') || p.includes('SSN'))).length;
 
   const narrativeText: Record<DemoStep, { title: string; desc: string }> = {
     problem: {
@@ -118,7 +116,7 @@ export default function DemoStory() {
     },
     'case-study': {
       title: '🎯 Case Study: The Recruiting Bot Incident',
-      desc: "Recruiting Bot was discovered with SSN access—employees' Social Security Numbers stored insecurely in an unauthorized tool. Emma didn't know it was being used. This is exactly the kind of breach that creates headlines.",
+      desc: "Recruiting Bot was discovered with sensitive data access—employee information stored insecurely in an unauthorized tool. Emma didn't know it was being used. This is exactly the kind of breach that creates headlines.",
     },
     consolidation: {
       title: '🔀 Smart Consolidation: Removing Duplicates',
@@ -422,7 +420,7 @@ export default function DemoStory() {
                       color: 'var(--text-primary)',
                     }}
                   >
-                    <strong>Permissions:</strong> {criticalRisks[0].permissions?.join(', ') || 'Database access, API keys, User records'}
+                    <strong>Permissions:</strong> {criticalRisks[0].data_permissions?.join(', ') || 'Database access, API keys, User records'}
                   </div>
                 </div>
               </div>

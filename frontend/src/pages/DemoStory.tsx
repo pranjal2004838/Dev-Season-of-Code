@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { uploadFiles, type DetectedApp } from '../services/api';
+import type { DetectedApp } from '../services/api';
 import Simulator from '../components/Simulator';
 import { showToast } from '../components/Toast';
 
@@ -26,30 +26,39 @@ export default function DemoStory() {
     setProgress(20);
     showToast('Analyzing expense reports and browser history...', 'info');
     try {
-      // Fetch demo files from test_data
-      const [expRes, brRes] = await Promise.all([
-        fetch('/test_data/expenses.csv'),
-        fetch('/test_data/browser_history.json'),
-      ]);
-      const expBlob = await expRes.blob();
-      const brBlob = await brRes.blob();
-      const expFile = new File([expBlob], 'expenses.csv', { type: 'text/csv' });
-      const brFile = new File([brBlob], 'browser_history.json', { type: 'application/json' });
-
       // Simulate scanning progress
+      await new Promise((r) => setTimeout(r, 500));
+      setProgress(40);
+      await new Promise((r) => setTimeout(r, 500));
+      setProgress(60);
       setStep('scanning');
-      for (let i = 30; i <= 90; i += 20) {
-        await new Promise((r) => setTimeout(r, 300));
-        setProgress(i);
-      }
-
-      const result = await uploadFiles(expFile, brFile);
-      setDetectedApps(result.detectedApps);
+      await new Promise((r) => setTimeout(r, 500));
+      setProgress(80);
+      await new Promise((r) => setTimeout(r, 500));
       setProgress(100);
+
+      // Demo data - realistic shadow IT findings
+      const demoApps: DetectedApp[] = [
+        { id: 1, name: 'Copper CRM', category: 'CRM', typical_price: 50, risk_level: 'high', employee: 'john.smith', department: 'Sales', evidence: ['Expense: $50/mo', 'Browser: 12 visits'], data_permissions: ['Contact info', 'Deal records'] },
+        { id: 2, name: 'Figma Pro', category: 'Design', typical_price: 120, risk_level: 'medium', employee: 'sarah.jones', department: 'Design', evidence: ['Expense: $120/mo', 'Browser: 45 visits'], data_permissions: ['Design files'] },
+        { id: 3, name: 'ChatGPT Pro', category: 'AI Tools', typical_price: 20, risk_level: 'medium', employee: 'alice.brown', department: 'Marketing', evidence: ['Expense: $20/mo', 'Browser: 89 visits'], data_permissions: ['Conversation logs', 'Uploaded documents'] },
+        { id: 4, name: 'Jasper.ai', category: 'AI Tools', typical_price: 50, risk_level: 'medium', employee: 'bob.wilson', department: 'Marketing', evidence: ['Expense: $50/mo', 'Browser: 67 visits'], data_permissions: ['Content prompts'] },
+        { id: 5, name: 'Canva Pro', category: 'Design', typical_price: 180, risk_level: 'low', employee: 'carol.white', department: 'Marketing', evidence: ['Expense: $180/year'], data_permissions: ['Design assets'] },
+        { id: 6, name: 'Zapier', category: 'Automation', typical_price: 99, risk_level: 'high', employee: 'david.lee', department: 'Operations', evidence: ['Expense: $99/mo', 'Browser: 156 visits'], data_permissions: ['API access', 'Webhook integration'] },
+        { id: 7, name: 'Notion', category: 'Documentation', typical_price: 10, risk_level: 'low', employee: 'emma.davis', department: 'Engineering', evidence: ['Expense: $10/mo', 'Browser: 234 visits'], data_permissions: ['Knowledge base'] },
+        { id: 8, name: '1Password Business', category: 'Security', typical_price: 60, risk_level: 'critical', employee: 'frank.miller', department: 'Engineering', evidence: ['Expense: $60/mo', 'Browser: 45 visits'], data_permissions: ['Credentials', 'Passwords', 'API keys'] },
+        { id: 9, name: 'LastPass', category: 'Security', typical_price: 40, risk_level: 'critical', employee: 'grace.hall', department: 'Engineering', evidence: ['Expense: $40/mo', 'Browser: 78 visits'], data_permissions: ['Credentials', 'SSN', 'Passwords'] },
+        { id: 10, name: 'Recruiting Bot', category: 'HR', typical_price: 200, risk_level: 'critical', employee: 'henry.jones', department: 'HR', evidence: ['Expense: $200/mo', 'Browser: 112 visits'], data_permissions: ['Employee records', 'SSN', 'Phone numbers'] },
+        { id: 11, name: 'Gusto Expenses', category: 'Finance', typical_price: 150, risk_level: 'high', employee: 'isabella.martin', department: 'Finance', evidence: ['Expense: $150/mo'], data_permissions: ['Payroll', 'Tax info'] },
+        { id: 12, name: 'Expensify', category: 'Finance', typical_price: 120, risk_level: 'medium', employee: 'jack.anderson', department: 'Finance', evidence: ['Expense: $120/mo', 'Browser: 89 visits'], data_permissions: ['Receipt data', 'Employee expenses'] },
+        { id: 13, name: 'Datadog', category: 'DevOps', typical_price: 180, risk_level: 'high', employee: 'kevin.thomas', department: 'Engineering', evidence: ['Expense: $180/mo', 'Browser: 234 visits'], data_permissions: ['Infrastructure logs', 'Performance data'] },
+      ];
+
+      setDetectedApps(demoApps);
       setStep('findings');
-      showToast(`Found ${result.totalApps} unauthorized SaaS applications!`, 'success');
+      showToast(`Found ${demoApps.length} unauthorized SaaS applications!`, 'success');
     } catch (err) {
-      showToast('Demo upload failed. Ensure backend is running.', 'error');
+      showToast('Demo failed. Refresh and try again.', 'error');
       console.error(err);
       setStep('problem');
     }

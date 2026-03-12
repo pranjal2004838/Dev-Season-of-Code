@@ -1,513 +1,237 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { DetectedApp } from '../services/api';
-import Simulator from '../components/Simulator';
-import { showToast } from '../components/Toast';
+import { useState } from 'react';
 
-type DemoStep =
-  | 'problem'
-  | 'investigation'
-  | 'uploading'
-  | 'scanning'
-  | 'findings'
-  | 'risk-breakdown'
-  | 'case-study'
-  | 'consolidation'
-  | 'cost-savings'
-  | 'conclusion';
+/* ═══════════════════════════════════════════════════════════════════════════
+   DemoStory — Interactive Guided Tour for Judges
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+interface Section {
+  id: string;
+  icon: string;
+  tab: string;
+  title: string;
+  why: string;
+  features: { label: string; detail: string }[];
+  interactions: { action: string; result: string }[];
+  judgeNote: string;
+}
+
+const SECTIONS: Section[] = [
+  {
+    id: 'overview',
+    icon: '🔍',
+    tab: 'All',
+    title: 'What Is Shadow SaaS Detector?',
+    why: 'Employees sign up for SaaS tools (Slack, Notion, ChatGPT, Figma…) without IT approval. This creates hidden costs, duplicate subscriptions, data leaks, and compliance violations. Shadow SaaS Detector discovers all of them from simple data uploads — no agents, no MDM, no admin access required.',
+    features: [
+      { label: 'Zero-Agent Detection', detail: 'Works from expense CSVs + browser history JSON — no software to install on employee devices.' },
+      { label: '100+ SaaS Database', detail: 'Matches against a curated database of 100 popular SaaS apps with known risk levels and data permissions.' },
+      { label: 'AI-Powered Analysis', detail: 'Uses Google Gemini AI for risk assessment, smart consolidation, and compliance auditing.' },
+      { label: 'Breach Simulation', detail: 'Supply Chain Risk Graph lets you simulate a vendor breach and see cascading impact in real time.' },
+    ],
+    interactions: [
+      { action: 'Navigate the tabs above', result: 'Each tab represents a key capability: Dashboard → Threat Map → Simulator → AI Insights.' },
+    ],
+    judgeNote: 'This solves a real $45B/year enterprise problem. 65% of SaaS apps in most companies are unknown to IT.',
+  },
+  {
+    id: 'dashboard',
+    icon: '📊',
+    tab: 'Dashboard',
+    title: 'Dashboard — Detection Engine',
+    why: 'The Dashboard is where detection happens. Upload company data (expense reports + browser history) and the engine cross-references against our SaaS database to find unauthorized apps.',
+    features: [
+      { label: 'Quick-Connect Buttons', detail: 'Click "Connect" on Google Workspace, Microsoft 365, or Expense System to simulate OAuth integration. This triggers an automatic scan with built-in demo data.' },
+      { label: 'Manual File Upload', detail: 'Or upload your own CSV + JSON files. Sample files are in the sample_uploads/ folder in the repository.' },
+      { label: 'Stats Overview', detail: 'After detection: total apps found, monthly spend total, high/critical risk count, and categories breakdown.' },
+      { label: 'App Cards', detail: 'Each detected app shows: name, category, cost, risk badge (color-coded), data permissions, and detection evidence.' },
+      { label: 'Interactive Charts', detail: 'Donut chart (risk distribution), bar chart (top 10 apps by cost), horizontal bar chart (spending by department).' },
+      { label: 'Playbook Modal', detail: 'Click "⚡ Playbook" on any app to simulate revoking access. Generates an email draft and audit log entry.' },
+    ],
+    interactions: [
+      { action: 'Click any "Connect" button (e.g., Google Workspace)', result: 'Simulates OAuth flow → scanning animation with progress bar → 25-30 shadow SaaS apps detected automatically from demo data.' },
+      { action: 'Click "⚡ Playbook" on a high-risk app card', result: 'Opens a modal showing app details → click "Simulate Revoke" → confirmation dialog → email draft generated → 30-second undo countdown starts.' },
+      { action: 'Click "Undo" during the 30-second countdown', result: 'Revoke is cancelled, app access is restored. Demonstrates non-destructive remediation flow.' },
+      { action: 'Click "🔄 New Scan" in the dashboard header', result: 'Resets all detected apps. You can start fresh and upload different data files.' },
+      { action: 'Click "Or upload files manually" and use sample_uploads/ files', result: 'Upload sample_expenses.csv + sample_browser_history.json from the repo. Different set of detections appears.' },
+    ],
+    judgeNote: 'The zero-agent approach is the key differentiator — most competitors require installing MDM, browser extensions, or SSO integration. This works with data any company already has.',
+  },
+  {
+    id: 'threat-map',
+    icon: '🗺️',
+    tab: 'Threat Map',
+    title: 'Threat Map — Supply Chain Risk & Attack Surface',
+    why: 'Shadow SaaS apps don\'t exist in isolation — they form a hidden supply chain. If one vendor is breached, the attack cascades through integrations (Slack→Notion→Zapier→CRM). This tab visualizes that risk web and lets you simulate breaches.',
+    features: [
+      { label: '🔗 Supply Chain Risk Graph', detail: 'Interactive network visualization showing how apps connect through integrations (solid blue), data sharing (dashed purple), and workflows (dotted green). Each connection is a potential breach pathway.' },
+      { label: '💥 Breach Cascade Simulator', detail: 'Select any app → click "Simulate Breach" → watch red/orange/yellow cascade spread through the network in real-time over 4 phases. Numbers on nodes show "hop distance" from the breach.' },
+      { label: '📊 Breach Impact Dashboard', detail: 'Appears after breach: apps compromised, data types exposed (PII, Credentials, Financial, etc.), departments hit, estimated breach cost (150× monthly multiplier).' },
+      { label: '⚖️ Regulatory Violations', detail: 'Auto-detects violated regulations: GDPR Art. 33, CCPA, SOC 2, HIPAA, SOX, PCI-DSS — with specific article/section citations.' },
+      { label: '📅 Breach Timeline', detail: 'Hour-by-hour progression: Hour 0 (compromise) → Hour 1-6 (data access) → Day 1-3 (lateral movement) → Day 3-7 (exfiltration) → Day 7+ (regulatory penalties).' },
+      { label: '🕸️ Attack Surface Map', detail: 'Below the Supply Chain Graph: apps as circles, data types as diamonds. Three view modes: Risk Level, Data Flow (animated), Blast Radius (expanding circles).' },
+      { label: '📋 Executive Brief', detail: 'One-click generates a professional, print-ready HTML board report in a new browser tab. Includes KPIs, risk table, consolidation opportunities, 4-phase remediation timeline, full app inventory.' },
+    ],
+    interactions: [
+      { action: 'Select "Slack" from the breach dropdown → click "💥 Simulate Breach"', result: 'Slack has the most integrations — watch 10+ apps cascade into compromise. Impact panel shows $30K+ in breach damages and multiple GDPR/SOC 2 violations.' },
+      { action: 'Click "↩ Reset" → Select "Zapier" → Simulate', result: 'Zapier is an automation hub connecting everything — this shows the absolute worst-case scenario with maximum cascade reach.' },
+      { action: 'Click "Reset" → try a low-risk, low-connection app', result: 'Compare: a standalone app like Canva has minimal blast radius vs. a hub like Slack/Zapier. This demonstrates why supply chain position matters more than individual risk level.' },
+      { action: 'Scroll to Attack Surface Map → click "Data Flow" mode', result: 'Animated dashed lines show data flowing between apps and data types. Visual representation of where your data actually lives.' },
+      { action: 'Scroll to Executive Brief → click "📋 Generate Executive Report"', result: 'Professional McKinsey-style report opens in new tab. Use Ctrl+P to print or save as PDF. Includes everything a board needs to understand the risk.' },
+    ],
+    judgeNote: 'The breach cascade simulator is the "holy shit" moment. No other shadow IT tool shows supply chain risk visualization. This makes executives viscerally understand why shadow SaaS is dangerous — one breach in Slack can compromise your entire organization.',
+  },
+  {
+    id: 'simulator',
+    icon: '💰',
+    tab: 'Simulator',
+    title: 'Simulator — Cost Savings Calculator',
+    why: 'Companies waste 30-40% of SaaS spend on duplicate tools (3 CRMs, 4 project management tools, 2 design tools). The Simulator lets you model consolidation scenarios and see exactly how much you save by keeping one app per category.',
+    features: [
+      { label: 'Category Grouping', detail: 'Apps are automatically grouped by category. Categories with 2+ apps are flagged as consolidation opportunities.' },
+      { label: 'Keep/Remove Selection', detail: 'Radio buttons let you pick which app to keep in each duplicate category. All others are marked for removal.' },
+      { label: 'Adoption Rate Slider', detail: 'Slide from 0-100% to model partial adoption: "What if only 70% of teams actually migrate?" Savings scale proportionally.' },
+      { label: 'Real-Time Savings', detail: 'Animated counter shows monthly and annual savings updating instantly as you change selections.' },
+      { label: 'Breakdown Table', detail: 'Per-category breakdown showing: kept app, removed apps, and dollar savings for each category.' },
+    ],
+    interactions: [
+      { action: 'In a category with 3+ apps (like CRM), click different radio buttons', result: 'The "kept" app changes. Try keeping the cheapest option vs. the most full-featured — savings recalculate instantly.' },
+      { action: 'Drag the adoption slider from 100% to 50%', result: 'Savings cut in half — this models the realistic scenario where not all teams migrate immediately. Plan for phased rollout.' },
+      { action: 'Set everything to 100% adoption and note the Annual Savings', result: 'This is the maximum possible savings. For typical demo data, expect $3,000-$6,000/year in potential savings.' },
+    ],
+    judgeNote: 'The real-time simulation with adoption rate modeling goes beyond basic "remove duplicates" — it models realistic enterprise rollout scenarios that CFOs actually need.',
+  },
+  {
+    id: 'ai',
+    icon: '🤖',
+    tab: 'AI Insights',
+    title: 'AI Insights — Intelligent Analysis (Gemini-Powered)',
+    why: 'Raw detection data isn\'t enough — IT teams need actionable intelligence. AI Insights uses Google Gemini 1.5 Flash to generate risk assessments, consolidation recommendations, and compliance audit reports. Falls back to rule-based analysis if no API key is configured.',
+    features: [
+      { label: 'Risk Assessment', detail: 'Each app gets an AI-generated risk score (0-100), severity level, reasoning explanation, specific risks identified, and actionable recommendations with priorities.' },
+      { label: 'Smart Consolidation', detail: 'AI identifies duplicate categories and recommends which tools to keep based on features, cost, risk profile, and team adoption. Shows projected savings per category.' },
+      { label: 'Compliance Audit', detail: 'Full compliance report: overall score (0-100), critical issues table with regulation citations (GDPR, HIPAA, SOC 2, etc.), action items list, and 12-month risk forecast.' },
+      { label: 'Export: Markdown & HTML', detail: 'Download the compliance report as a .md file for documentation, or open as styled HTML for printing/PDF generation.' },
+    ],
+    interactions: [
+      { action: 'Click the "Risk Assessment" sub-tab', result: 'Auto-loads risk analysis. Summary bar shows critical/high/medium/low counts. Scroll through cards — each has AI-generated reasoning and specific recommendations.' },
+      { action: 'Click the "Smart Consolidation" sub-tab', result: 'Category cards appear with green "KEEP" and red "REMOVE" tags. AI explains WHY to keep each tool. Total savings banner at top.' },
+      { action: 'Click the "Compliance Audit" sub-tab', result: 'Compliance score gauge appears. Issues table lists problems with severity badges. Scroll to see action items and 12-month forecast.' },
+      { action: 'Click "📥 Download .md" button', result: 'Downloads a Markdown compliance report file. Open in any editor or include in documentation.' },
+      { action: 'Click "🖨️ Open as HTML" button', result: 'Opens a styled HTML report in new tab. Use Ctrl+P / Cmd+P to print or "Save as PDF".' },
+    ],
+    judgeNote: 'The AI adds genuine intelligence — not just "here are your apps" but "here\'s exactly what to do about each one and why." The rule-based fallback ensures the app works perfectly even without an API key.',
+  },
+  {
+    id: 'architecture',
+    icon: '🏗️',
+    tab: 'Architecture',
+    title: 'Technical Architecture & Key Design Decisions',
+    why: 'Under the hood, Shadow SaaS Detector is a full-stack TypeScript application designed for production deployment. Every component is modular, testable, and built with modern best practices.',
+    features: [
+      { label: 'Frontend Stack', detail: 'React 19.2 + TypeScript 5.9 + Vite 7.3. Recharts for data visualization. CSS-in-CSS with CSS custom properties for theming. Zero component libraries — all hand-crafted UI.' },
+      { label: 'Backend Stack', detail: 'Node.js + Express + TypeScript. Multer for secure file uploads. Modular route/service architecture (routes/upload.ts, services/detector.ts, etc.).' },
+      { label: 'AI Integration', detail: 'Google Generative AI SDK (Gemini 1.5 Flash). Structured JSON output parsing. Graceful fallback to rule-based analysis. Caching layer for performance.' },
+      { label: 'Detection Engine', detail: 'Pattern-matching against 100-app curated database with keywords, risk levels, and data permissions. CSV parser + JSON analyzer. Multi-evidence tracking per app.' },
+      { label: 'Testing', detail: 'Vitest for unit tests (simulator, playbook services). Playwright for E2E tests and automated screenshot generation.' },
+      { label: 'Deployment', detail: 'Render.com with Infrastructure-as-Code (render.yaml). Single build pipeline: frontend build → backend compile → production Node.js server.' },
+    ],
+    interactions: [],
+    judgeNote: 'Built with production-grade tools and patterns. Not a hackathon prototype — a deployable product. Zero external UI libraries keeps the bundle lean and demonstrates full-stack capability.',
+  },
+];
 
 export default function DemoStory() {
-  const [step, setStep] = useState<DemoStep>('problem');
-  const [detectedApps, setDetectedApps] = useState<DetectedApp[]>([]);
-  const [autoPlay, setAutoPlay] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [activeSection, setActiveSection] = useState('overview');
 
-  const runUpload = useCallback(async () => {
-    setStep('uploading');
-    setProgress(20);
-    showToast('Analyzing expense reports and browser history...', 'info');
-    try {
-      // Simulate scanning progress
-      await new Promise((r) => setTimeout(r, 500));
-      setProgress(40);
-      await new Promise((r) => setTimeout(r, 500));
-      setProgress(60);
-      setStep('scanning');
-      await new Promise((r) => setTimeout(r, 500));
-      setProgress(80);
-      await new Promise((r) => setTimeout(r, 500));
-      setProgress(100);
-
-      // Demo data - realistic shadow IT findings
-      const demoApps: DetectedApp[] = [
-        { id: 1, name: 'Copper CRM', category: 'CRM', typical_price: 50, risk_level: 'high', employee: 'john.smith', department: 'Sales', evidence: ['Expense: $50/mo', 'Browser: 12 visits'], data_permissions: ['Contact info', 'Deal records'] },
-        { id: 2, name: 'Figma Pro', category: 'Design', typical_price: 120, risk_level: 'medium', employee: 'sarah.jones', department: 'Design', evidence: ['Expense: $120/mo', 'Browser: 45 visits'], data_permissions: ['Design files'] },
-        { id: 3, name: 'ChatGPT Pro', category: 'AI Tools', typical_price: 20, risk_level: 'medium', employee: 'alice.brown', department: 'Marketing', evidence: ['Expense: $20/mo', 'Browser: 89 visits'], data_permissions: ['Conversation logs', 'Uploaded documents'] },
-        { id: 4, name: 'Jasper.ai', category: 'AI Tools', typical_price: 50, risk_level: 'medium', employee: 'bob.wilson', department: 'Marketing', evidence: ['Expense: $50/mo', 'Browser: 67 visits'], data_permissions: ['Content prompts'] },
-        { id: 5, name: 'Canva Pro', category: 'Design', typical_price: 180, risk_level: 'low', employee: 'carol.white', department: 'Marketing', evidence: ['Expense: $180/year'], data_permissions: ['Design assets'] },
-        { id: 6, name: 'Zapier', category: 'Automation', typical_price: 99, risk_level: 'high', employee: 'david.lee', department: 'Operations', evidence: ['Expense: $99/mo', 'Browser: 156 visits'], data_permissions: ['API access', 'Webhook integration'] },
-        { id: 7, name: 'Notion', category: 'Documentation', typical_price: 10, risk_level: 'low', employee: 'emma.davis', department: 'Engineering', evidence: ['Expense: $10/mo', 'Browser: 234 visits'], data_permissions: ['Knowledge base'] },
-        { id: 8, name: '1Password Business', category: 'Security', typical_price: 60, risk_level: 'critical', employee: 'frank.miller', department: 'Engineering', evidence: ['Expense: $60/mo', 'Browser: 45 visits'], data_permissions: ['Credentials', 'Passwords', 'API keys'] },
-        { id: 9, name: 'LastPass', category: 'Security', typical_price: 40, risk_level: 'critical', employee: 'grace.hall', department: 'Engineering', evidence: ['Expense: $40/mo', 'Browser: 78 visits'], data_permissions: ['Credentials', 'SSN', 'Passwords'] },
-        { id: 10, name: 'Recruiting Bot', category: 'HR', typical_price: 200, risk_level: 'critical', employee: 'henry.jones', department: 'HR', evidence: ['Expense: $200/mo', 'Browser: 112 visits'], data_permissions: ['Employee records', 'SSN', 'Phone numbers'] },
-        { id: 11, name: 'Gusto Expenses', category: 'Finance', typical_price: 150, risk_level: 'high', employee: 'isabella.martin', department: 'Finance', evidence: ['Expense: $150/mo'], data_permissions: ['Payroll', 'Tax info'] },
-        { id: 12, name: 'Expensify', category: 'Finance', typical_price: 120, risk_level: 'medium', employee: 'jack.anderson', department: 'Finance', evidence: ['Expense: $120/mo', 'Browser: 89 visits'], data_permissions: ['Receipt data', 'Employee expenses'] },
-        { id: 13, name: 'Datadog', category: 'DevOps', typical_price: 180, risk_level: 'high', employee: 'kevin.thomas', department: 'Engineering', evidence: ['Expense: $180/mo', 'Browser: 234 visits'], data_permissions: ['Infrastructure logs', 'Performance data'] },
-      ];
-
-      setDetectedApps(demoApps);
-      setStep('findings');
-      showToast(`Found ${demoApps.length} unauthorized SaaS applications!`, 'success');
-    } catch (err) {
-      showToast('Demo failed. Refresh and try again.', 'error');
-      console.error(err);
-      setStep('problem');
-    }
-  }, []);
-
-  // Auto-advance steps
-  useEffect(() => {
-    if (!autoPlay) return;
-    let timer: ReturnType<typeof setTimeout>;
-
-    if (step === 'findings' && detectedApps.length > 0) {
-      timer = setTimeout(() => setStep('risk-breakdown'), 3000);
-    } else if (step === 'risk-breakdown') {
-      timer = setTimeout(() => setStep('case-study'), 3000);
-    } else if (step === 'case-study') {
-      timer = setTimeout(() => setStep('consolidation'), 3000);
-    } else if (step === 'consolidation') {
-      timer = setTimeout(() => setStep('cost-savings'), 3000);
-    } else if (step === 'cost-savings') {
-      timer = setTimeout(() => setStep('conclusion'), 3000);
-    }
-
-    return () => clearTimeout(timer);
-  }, [autoPlay, step, detectedApps]);
-
-  // Company context for the story
-  const companyContext = {
-    name: 'GrowthLabs',
-    employees: 150,
-    budget: '$50K/month',
-    department: 'Engineering',
-  };
-
-  const criticalRisks = detectedApps.filter((a) => a.risk_level === 'critical');
-  const highRisks = detectedApps.filter((a) => a.risk_level === 'high');
-  const totalSpend = detectedApps.reduce((sum, app) => sum + app.typical_price, 0);
-  const potentialSavings = Math.round((totalSpend / 1005) * 500); // Scale based on demo
-  const complianceAtRisk = detectedApps.filter((a) => a.data_permissions?.some((p) => p.includes('PII') || p.includes('SSN'))).length;
-
-  const narrativeText: Record<DemoStep, { title: string; desc: string }> = {
-    problem: {
-      title: '🏢 The Problem: Shadow IT at GrowthLabs',
-      desc: 'Emma is the IT Manager at GrowthLabs, a 150-person SaaS startup. For months, her CFO has complained about unexplained software expenses. IT has no visibility into unauthorized tools. Developers use their own CI/CD tools. Design uses unlicensed subscriptions. Finance has shadow expense tools. Risk: $1000+/month wasted + potential data breaches.',
-    },
-    investigation: {
-      title: '🔍 The Investigation Begins',
-      desc: "Emma collects two data sources: expense reports (what was actually purchased) and browser history (what employees actually visited). She doesn't need to ask permission or deploy agents—just load the data and let Shadow SaaS Detector find patterns.",
-    },
-    uploading: {
-      title: '📤 Uploading Organization Data',
-      desc: 'Emma uploads expense reports and browser history. The detector begins cross-referencing against a database of 100+ known SaaS apps.',
-    },
-    scanning: {
-      title: '⚡ Scanning & Detecting Patterns',
-      desc: 'The engine is analyzing patterns across all departments, matching apps to risk levels based on data permissions and compliance exposure.',
-    },
-    findings: {
-      title: '💥 Findings: 35 Unauthorized Apps Detected',
-      desc: `Across ${detectedApps.length} detected applications costing $${totalSpend}/month, with ${criticalRisks.length} critical-risk apps and ${highRisks.length} high-risk apps. ${complianceAtRisk} apps have access to PII/SSN—a compliance violation waiting to happen.`,
-    },
-    'risk-breakdown': {
-      title: '🛡️ Risk Assessment Deep Dive',
-      desc: 'Each app is scored by: (1) Data access permissions (PII, SSN, financial records), (2) Compliance violations (GDPR, CCPA), (3) Industry-standard risk database. Critical apps get visual warnings.',
-    },
-    'case-study': {
-      title: '🎯 Case Study: The Recruiting Bot Incident',
-      desc: "Recruiting Bot was discovered with sensitive data access—employee information stored insecurely in an unauthorized tool. Emma didn't know it was being used. This is exactly the kind of breach that creates headlines.",
-    },
-    consolidation: {
-      title: '🔀 Smart Consolidation: Removing Duplicates',
-      desc: `The detector identifies duplicate tools across departments: 3 different design tools, 4 project management systems, 2 password managers. By consolidating to approved vendors, GrowthLabs can reduce monthly spend while improving security.`,
-    },
-    'cost-savings': {
-      title: '💰 Cost Savings Simulator',
-      desc: `Emma uses the simulator to explore what-if scenarios. Revoking unused apps and consolidating duplicates could save $${potentialSavings}+/year while eliminating compliance risks.`,
-    },
-    conclusion: {
-      title: '✅ Outcome: Full Visibility & Control',
-      desc: 'Emma now has: (1) Complete shadow IT inventory, (2) Risk scores for each app, (3) Consolidation recommendations, (4) Audit trail for compliance, (5) Data for executive presentation. She can make informed decisions backed by data.',
-    },
-  };
+  const section = SECTIONS.find(s => s.id === activeSection) || SECTIONS[0];
 
   return (
-    <div>
-      {/* Main Story Section */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1))',
-          border: '1px solid rgba(59,130,246,0.3)',
-          borderRadius: '0.75rem',
-          padding: '1.5rem',
-          marginBottom: '2rem',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1.5rem' }}>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: '0.7rem', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem', fontWeight: 600 }}>
-              👩‍💼 Emma's Audit Story
-            </div>
-            <h2 style={{ margin: '0 0 0.75rem 0', fontSize: '1.4rem', color: 'var(--text-primary)' }}>
-              {narrativeText[step].title}
-            </h2>
-            <p style={{ fontSize: '0.95rem', lineHeight: 1.7, color: 'var(--text-secondary)', margin: 0 }}>
-              {narrativeText[step].desc}
-            </p>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flexShrink: 0 }}>
-            {step === 'problem' && (
-              <>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => { setAutoPlay(false); setStep('investigation'); }}
-                  style={{ whiteSpace: 'nowrap' }}
-                >
-                  👉 Next Step
-                </button>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => { setAutoPlay(true); setStep('investigation'); }}
-                  style={{ whiteSpace: 'nowrap' }}
-                >
-                  ⏩ Autoplay
-                </button>
-              </>
-            )}
-            {step === 'investigation' && (
-              <button className="btn btn-primary" onClick={runUpload} style={{ whiteSpace: 'nowrap' }}>
-                📤 Start Detection
-              </button>
-            )}
-            {(step === 'uploading' || step === 'scanning') && (
-              <div style={{ fontSize: '0.9rem', color: 'var(--accent)', fontWeight: 600 }}>
-                {step === 'uploading' ? 'Uploading...' : 'Scanning...'}
-              </div>
-            )}
-            {step === 'findings' && (
-              <button className="btn btn-primary" onClick={() => setStep('risk-breakdown')} style={{ whiteSpace: 'nowrap' }}>
-                📊 View Breakdown
-              </button>
-            )}
-            {step === 'risk-breakdown' && (
-              <button className="btn btn-primary" onClick={() => setStep('case-study')} style={{ whiteSpace: 'nowrap' }}>
-                🎯 View Case Study
-              </button>
-            )}
-            {step === 'case-study' && (
-              <button className="btn btn-primary" onClick={() => setStep('consolidation')} style={{ whiteSpace: 'nowrap' }}>
-                🔀 Consolidation
-              </button>
-            )}
-            {step === 'consolidation' && (
-              <button className="btn btn-primary" onClick={() => setStep('cost-savings')} style={{ whiteSpace: 'nowrap' }}>
-                💰 See Savings
-              </button>
-            )}
-            {step === 'cost-savings' && (
-              <button className="btn btn-primary" onClick={() => setStep('conclusion')} style={{ whiteSpace: 'nowrap' }}>
-                ✅ Conclusion
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Progress Bar */}
-        {(step === 'uploading' || step === 'scanning') && (
-          <div style={{ marginTop: '1rem' }}>
-            <div
-              style={{
-                background: 'rgba(0,0,0,0.3)',
-                borderRadius: '999px',
-                height: '8px',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  background: 'linear-gradient(90deg, var(--accent), var(--success))',
-                  height: '100%',
-                  width: `${progress}%`,
-                  transition: 'width 0.3s ease',
-                }}
-              />
-            </div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.5rem', textAlign: 'center' }}>
-              {progress}% Complete
-            </div>
-          </div>
-        )}
+    <div className="demo-story">
+      {/* header */}
+      <div className="ds-header">
+        <h2>🎬 Interactive Demo Guide</h2>
+        <p className="ds-header-sub">
+          A walkthrough for judges and users explaining every feature, interaction, and design decision.
+          Click each section below to learn what each part of the app does and how to interact with it.
+        </p>
       </div>
 
-      {/* Step 1: Problem Overview */}
-      {step === 'problem' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-          <div
-            style={{
-              background: 'rgba(59,130,246,0.1)',
-              border: '1px solid rgba(59,130,246,0.3)',
-              borderRadius: '0.5rem',
-              padding: '1rem',
-            }}
+      {/* section nav */}
+      <div className="ds-nav">
+        {SECTIONS.map(s => (
+          <button
+            key={s.id}
+            className={`ds-nav-btn ${activeSection === s.id ? 'ds-nav-active' : ''}`}
+            onClick={() => setActiveSection(s.id)}
           >
-            <div style={{ fontSize: '0.7rem', color: 'var(--accent)', textTransform: 'uppercase', fontWeight: 600 }}>Company Size</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '0.25rem' }}>{companyContext.employees} employees</div>
-          </div>
-          <div
-            style={{
-              background: 'rgba(139,92,246,0.1)',
-              border: '1px solid rgba(139,92,246,0.3)',
-              borderRadius: '0.5rem',
-              padding: '1rem',
-            }}
-          >
-            <div style={{ fontSize: '0.7rem', color: 'rgb(139,92,246)', textTransform: 'uppercase', fontWeight: 600 }}>Software Budget</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 700, marginTop: '0.25rem' }}>{companyContext.budget}</div>
-          </div>
-          <div
-            style={{
-              background: 'rgba(220,38,38,0.1)',
-              border: '1px solid rgba(220,38,38,0.3)',
-              borderRadius: '0.5rem',
-              padding: '1rem',
-            }}
-          >
-            <div style={{ fontSize: '0.7rem', color: 'rgb(220,38,38)', textTransform: 'uppercase', fontWeight: 600 }}>Problem</div>
-            <div style={{ fontSize: '1.2rem', fontWeight: 700, marginTop: '0.25rem' }}>$1000+/mo wasted</div>
+            <span className="ds-nav-icon">{s.icon}</span>
+            <span className="ds-nav-label">{s.tab}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* section content */}
+      <div className="ds-content">
+        <div className="ds-section-header">
+          <span className="ds-section-icon">{section.icon}</span>
+          <div>
+            <h3 className="ds-section-title">{section.title}</h3>
+            <span className="ds-tab-badge">Tab: {section.tab}</span>
           </div>
         </div>
-      )}
 
-      {/* Step 3-4: Uploading & Scanning */}
-      {(step === 'uploading' || step === 'scanning') && (
-        <div style={{ textAlign: 'center', padding: '3rem 2rem' }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem', animation: 'pulse 2s infinite' }}>📊</div>
-          <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-            {step === 'uploading'
-              ? 'Emma uploads 2 months of expense reports and browser history...'
-              : 'The detector is cross-referencing against 100+ SaaS apps...'}
-          </div>
+        {/* why */}
+        <div className="ds-why">
+          <h4>Why This Matters</h4>
+          <p>{section.why}</p>
         </div>
-      )}
 
-      {/* Step 5: Findings */}
-      {step === 'findings' && detectedApps.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-          <div
-            style={{
-              background: 'rgba(59,130,246,0.1)',
-              border: '2px solid var(--accent)',
-              borderRadius: '0.5rem',
-              padding: '1.25rem',
-              textAlign: 'center',
-            }}
-          >
-            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--accent)' }}>{detectedApps.length}</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Unauthorized Apps</div>
-          </div>
-          <div
-            style={{
-              background: 'rgba(220,38,38,0.1)',
-              border: '2px solid rgb(220,38,38)',
-              borderRadius: '0.5rem',
-              padding: '1.25rem',
-              textAlign: 'center',
-            }}
-          >
-            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'rgb(220,38,38)' }}>${totalSpend}</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Monthly Spend</div>
-          </div>
-          <div
-            style={{
-              background: 'rgba(245,157,11,0.1)',
-              border: '2px solid rgb(245,157,11)',
-              borderRadius: '0.5rem',
-              padding: '1.25rem',
-              textAlign: 'center',
-            }}
-          >
-            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'rgb(245,157,11)' }}>{criticalRisks.length}</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>Critical Risk</div>
-          </div>
-          <div
-            style={{
-              background: 'rgba(34,197,94,0.1)',
-              border: '2px solid rgb(34,197,94)',
-              borderRadius: '0.5rem',
-              padding: '1.25rem',
-              textAlign: 'center',
-            }}
-          >
-            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'rgb(34,197,94)' }}>{complianceAtRisk}</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>PII/SSN Exposed</div>
-          </div>
-        </div>
-      )}
-
-      {/* Step 6: Risk Breakdown */}
-      {step === 'risk-breakdown' && detectedApps.length > 0 && (
-        <>
-          <div style={{ marginBottom: '1.5rem' }}>
-            <h3 style={{ marginBottom: '1rem' }}>🛡️ Apps by Risk Level</h3>
-            <div style={{ display: 'grid', gap: '0.75rem' }}>
-              {[
-                { level: 'Critical', count: detectedApps.filter((a) => a.risk_level === 'critical').length, color: '#dc2626' },
-                { level: 'High', count: detectedApps.filter((a) => a.risk_level === 'high').length, color: '#f97316' },
-                { level: 'Medium', count: detectedApps.filter((a) => a.risk_level === 'medium').length, color: '#eab308' },
-                { level: 'Low', count: detectedApps.filter((a) => a.risk_level === 'low').length, color: '#22c55e' },
-              ].map((item) => (
-                <div key={item.level} style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <div
-                    style={{
-                      background: item.color,
-                      width: '12px',
-                      height: '12px',
-                      borderRadius: '50%',
-                      flexShrink: 0,
-                    }}
-                  />
-                  <span style={{ fontSize: '0.95rem', flex: 1 }}>{item.level}</span>
-                  <span style={{ fontWeight: 700, fontSize: '1.1rem', color: item.color }}>{item.count}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ marginBottom: '1.5rem' }}>
-            <h3 style={{ marginBottom: '1rem' }}>📊 Top 5 Most Expensive Apps</h3>
-            <div style={{ display: 'grid', gap: '0.5rem' }}>
-              {detectedApps.sort((a, b) => b.typical_price - a.typical_price).slice(0, 5).map((app) => (
-                <div key={app.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '0.375rem', fontSize: '0.9rem' }}>
-                  <span>{app.name}</span>
-                  <span style={{ fontWeight: 700, color: 'rgb(245,157,11)' }}>${app.typical_price}/mo</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* Step 7: Case Study */}
-      {step === 'case-study' && detectedApps.length > 0 && (
-        <>
-          {criticalRisks.length > 0 && (
-            <div
-              style={{
-                background: 'rgba(220,38,38,0.1)',
-                border: '1px solid rgba(220,38,38,0.3)',
-                borderRadius: '0.5rem',
-                padding: '1.5rem',
-                marginBottom: '1.5rem',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-                <div style={{ fontSize: '1.5rem' }}>⚠️</div>
-                <div style={{ flex: 1 }}>
-                  <h3 style={{ margin: '0 0 0.5rem 0', color: 'rgb(220,38,38)' }}>Critical Risk Example</h3>
-                  <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
-                    {criticalRisks[0].name} has access to sensitive employee data. This tool was signed up without IT approval, creating both a data breach risk and potential compliance violation.
-                  </p>
-                  <div
-                    style={{
-                      background: 'rgba(0,0,0,0.3)',
-                      border: '1px solid rgba(220,38,38,0.5)',
-                      borderRadius: '0.375rem',
-                      padding: '0.75rem',
-                      fontSize: '0.85rem',
-                      fontFamily: 'monospace',
-                      color: 'var(--text-primary)',
-                    }}
-                  >
-                    <strong>Permissions:</strong> {criticalRisks[0].data_permissions?.join(', ') || 'Database access, API keys, User records'}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          <div style={{ fontSize: '0.95rem', lineHeight: 1.7, color: 'var(--text-secondary)' }}>
-            <p>
-              This is the kind of shadow IT that leads to headlines: "Company exposes SSNs in unauthorized SaaS tool." Emma now has the evidence to act decisively. She can generate an audit report, notify the employee, and revoke access—all tracked and documented.
-            </p>
-          </div>
-        </>
-      )}
-
-      {/* Step 8: Consolidation */}
-      {step === 'consolidation' && detectedApps.length > 0 && (
-        <div
-          style={{
-            background: 'rgba(139,92,246,0.1)',
-            border: '1px solid rgba(139,92,246,0.3)',
-            borderRadius: '0.5rem',
-            padding: '1.5rem',
-          }}
-        >
-          <h3 style={{ marginBottom: '1rem' }}>🎯 Consolidation Opportunities</h3>
-          <div style={{ display: 'grid', gap: '1rem' }}>
-            {[
-              { category: 'Design Tools', apps: detectedApps.filter((a) => a.category === 'Design').length, savings: '$240/mo' },
-              { category: 'Project Management', apps: detectedApps.filter((a) => a.category === 'Project Management').length, savings: '$180/mo' },
-              { category: 'AI & Writing', apps: detectedApps.filter((a) => a.category === 'AI Tools').length, savings: '$150/mo' },
-            ].map((item) => (
-              <div key={item.category} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(255,255,255,0.05)', borderRadius: '0.375rem' }}>
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{item.category}</div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{item.apps} different tools detected</div>
-                </div>
-                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'rgb(34,197,94)' }}>{item.savings}</div>
+        {/* features */}
+        <div className="ds-features">
+          <h4>✨ Features</h4>
+          <div className="ds-feature-grid">
+            {section.features.map((f, i) => (
+              <div key={i} className="ds-feature-card">
+                <div className="ds-feature-label">{f.label}</div>
+                <div className="ds-feature-detail">{f.detail}</div>
               </div>
             ))}
           </div>
         </div>
-      )}
 
-      {/* Step 9: Cost Savings Simulation */}
-      {(step === 'cost-savings' || step === 'conclusion') && detectedApps.length > 0 && (
-        <>
-          {step === 'cost-savings' && <Simulator detectedApps={detectedApps} />}
-        </>
-      )}
-
-      {/* Step 10: Conclusion */}
-      {step === 'conclusion' && (
-        <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>✅</div>
-          <h2 style={{ marginBottom: '1rem' }}>Demo Complete!</h2>
-          <div
-            style={{
-              background: 'rgba(34,197,94,0.1)',
-              border: '1px solid rgba(34,197,94,0.3)',
-              borderRadius: '0.5rem',
-              padding: '1.5rem',
-              marginBottom: '1rem',
-            }}
-          >
-            <p style={{ fontSize: '0.95rem', lineHeight: 1.7, margin: 0 }}>
-              Emma now has complete visibility into shadow IT at {companyContext.name}. She can: <br />
-              <strong>✓</strong> Identify all unauthorized apps<br />
-              <strong>✓</strong> Assess security & compliance risks<br />
-              <strong>✓</strong> Find consolidation opportunities<br />
-              <strong>✓</strong> Calculate savings and ROI<br />
-              <strong>✓</strong> Generate audit reports for compliance<br />
-              <strong>✓</strong> Make data-driven decisions backed by evidence
-            </p>
+        {/* interactions */}
+        {section.interactions.length > 0 && (
+          <div className="ds-interactions">
+            <h4>👆 Try This — Interactive Guide</h4>
+            <div className="ds-interaction-list">
+              {section.interactions.map((int, i) => (
+                <div key={i} className="ds-interaction">
+                  <div className="ds-int-action">
+                    <span className="ds-int-num">{i + 1}</span>
+                    <span className="ds-int-do">{int.action}</span>
+                  </div>
+                  <div className="ds-int-result">→ {int.result}</div>
+                </div>
+              ))}
+            </div>
           </div>
-          <button className="btn btn-primary" onClick={() => setStep('problem')}>
-            🔄 Run Demo Again
-          </button>
+        )}
+
+        {/* judge note */}
+        <div className="ds-judge-note">
+          <div className="ds-judge-badge">🏆 Why This Matters for Judging</div>
+          <p>{section.judgeNote}</p>
         </div>
-      )}
+      </div>
+
+      {/* quick stats footer */}
+      <div className="ds-footer">
+        <div className="ds-footer-stat"><strong>5</strong> Interactive Tabs</div>
+        <div className="ds-footer-stat"><strong>100+</strong> SaaS Apps in DB</div>
+        <div className="ds-footer-stat"><strong>AI</strong> Gemini-Powered</div>
+        <div className="ds-footer-stat"><strong>0</strong> Agents Required</div>
+        <div className="ds-footer-stat"><strong>∞</strong> Breach Simulations</div>
+      </div>
     </div>
   );
 }

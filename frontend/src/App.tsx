@@ -4,6 +4,7 @@ import Simulator from './components/Simulator';
 import AIInsights from './components/AIInsights';
 import AttackSurfaceMap from './components/AttackSurfaceMap';
 import ExecutiveBrief from './components/ExecutiveBrief';
+import SupplyChainRisk from './components/SupplyChainRisk';
 import ThreatTicker from './components/ThreatTicker';
 import DemoStory from './pages/DemoStory';
 import Toast from './components/Toast';
@@ -85,6 +86,7 @@ export default function App() {
 
       {tab === 'threat-map' && (
         <>
+          <SupplyChainRisk detectedApps={detectedApps} />
           <AttackSurfaceMap detectedApps={detectedApps} />
           <ExecutiveBrief detectedApps={detectedApps} />
         </>

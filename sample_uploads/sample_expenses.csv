@@ -1,0 +1,26 @@
+Date,Employee,Department,Amount,Description,Category
+2026-01-10,alex.johnson,Engineering,45,GitHub Copilot Business License,Software
+2026-01-12,maria.garcia,Marketing,99,HubSpot Marketing Pro,Software
+2026-01-14,james.chen,Sales,65,Salesforce Essentials Monthly,Software
+2026-01-15,emily.davis,Design,22,Canva Pro Subscription,Software
+2026-01-18,alex.johnson,Engineering,150,AWS Developer Account,Software
+2026-01-20,maria.garcia,Marketing,29,Mailchimp Standard Plan,Software
+2026-01-22,james.chen,Sales,50,Copper CRM Monthly,Software
+2026-01-25,sarah.kim,HR,40,BambooHR Monthly License,Software
+2026-02-01,david.patel,Finance,30,QuickBooks Online Subscription,Software
+2026-02-03,emily.davis,Design,120,Figma Professional,Software
+2026-02-05,alex.johnson,Engineering,20,ChatGPT Plus Subscription,Software
+2026-02-08,maria.garcia,Marketing,49,Hootsuite Professional,Software
+2026-02-10,team.all,Operations,100,Slack Business Plan Monthly,Software
+2026-02-12,james.chen,Sales,15,Pipedrive CRM Starter,Software
+2026-02-15,sarah.kim,HR,40,Gusto Payroll Monthly,Software
+2026-02-18,david.patel,Finance,25,Expensify Team Plan,Software
+2026-02-20,alex.johnson,Engineering,26,Sentry Error Tracking Pro,Software
+2026-02-22,alex.johnson,Engineering,20,Datadog Infrastructure Monitoring,Software
+2026-02-25,emily.davis,Design,13,Loom Business Recorder,Software
+2026-02-28,maria.garcia,Marketing,30,ActiveCampaign Lite,Software
+2026-03-01,alex.johnson,Engineering,20,Zapier Professional,Software
+2026-03-03,david.patel,Finance,25,DocuSign Personal Plan,Software
+2026-03-05,team.all,Operations,8,Notion Team Workspace,Software
+2026-03-07,sarah.kim,HR,55,Zendesk Support Team,Software
+2026-03-09,james.chen,Sales,32,Calendly Professional,Software

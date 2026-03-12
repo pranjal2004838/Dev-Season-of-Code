@@ -2,13 +2,15 @@ import { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import Simulator from './components/Simulator';
 import AIInsights from './components/AIInsights';
+import AttackSurfaceMap from './components/AttackSurfaceMap';
+import ExecutiveBrief from './components/ExecutiveBrief';
 import ThreatTicker from './components/ThreatTicker';
 import DemoStory from './pages/DemoStory';
 import Toast from './components/Toast';
 import type { DetectedApp } from './services/api';
 import './index.css';
 
-type Tab = 'dashboard' | 'simulator' | 'ai' | 'demo';
+type Tab = 'dashboard' | 'threat-map' | 'simulator' | 'ai' | 'demo';
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('dashboard');
@@ -45,6 +47,12 @@ export default function App() {
           📊 Dashboard
         </button>
         <button
+          className={`nav-tab ${tab === 'threat-map' ? 'active' : ''}`}
+          onClick={() => setTab('threat-map')}
+        >
+          🗺️ Threat Map
+        </button>
+        <button
           className={`nav-tab ${tab === 'simulator' ? 'active' : ''}`}
           onClick={() => setTab('simulator')}
         >
@@ -73,6 +81,13 @@ export default function App() {
           revokedApps={revokedApps}
           setRevokedApps={setRevokedApps}
         />
+      )}
+
+      {tab === 'threat-map' && (
+        <>
+          <AttackSurfaceMap detectedApps={detectedApps} />
+          <ExecutiveBrief detectedApps={detectedApps} />
+        </>
       )}
 
       {tab === 'simulator' && (

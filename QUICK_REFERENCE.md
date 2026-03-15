@@ -2,9 +2,9 @@
 
 ## 🎯 THE PITCH (Tell This to Judges)
 
-"We built Shadow SaaS Detector to help IT managers control unauthorized software spending. Companies lose $300-500/month to shadow SaaS—tools employees use without approval. Our app detects these tools from expense reports and browser history, identifies security risks, and recommends consolidation. One customer saved $3,840 annually."
+"Meet Emma, an IT manager at a growing company. Finance sees unexplained software charges, legal worries about compliance, and employees are connecting random SaaS tools to company data without approval. Shadow SaaS Detector helps her discover unauthorized apps, understand the real security and compliance risk, and take action before shadow IT becomes a breach."
 
-**Time to tell: 30 seconds**
+**Time to tell: 30-45 seconds**
 
 ---
 
@@ -119,21 +119,21 @@ shadow-saas-detector/
 
 ---
 
-## 🎬 DEMO SCRIPT (2-3 minutes)
+## 🎬 DEMO SCRIPT (2 minutes)
 
 ```
-0:00 - "This is Shadow SaaS Detector"
-0:05 - Problem: "Startups lose $300+/month to unauthorized tools"
-0:15 - Show expense report upload
-0:20 - Upload completes, dashboard loads
-0:30 - Highlight high-risk app (red badge)
-0:40 - Show duplicates: "3 project tools, pick 1, save $100/month"
-0:50 - Show recommendations section
-1:00 - Click export PDF
-1:05 - Show PDF report generated
-1:10 - "Total savings: $320/month. This is what IT managers need."
-1:15 - Show architecture diagram (optional)
-1:20 - Call to action: "Join us in controlling SaaS spending"
+0:00 - "Emma is an IT manager. Leadership wants to know why the company is paying for tools nobody approved."
+0:10 - "This is not just wasted budget. It is hidden security and compliance risk."
+0:15 - Click Google Workspace or Microsoft 365 connect
+0:25 - Let the scan animation play
+0:35 - "Now Emma can see every unauthorized app, who is using it, and how much shadow spend is accumulating."
+0:45 - Point to app count, monthly spend, and high-risk count
+0:55 - Open AI Insights
+1:05 - "Our AI does more than flag apps. It explains risk, finds consolidation opportunities, and surfaces compliance issues."
+1:20 - Open a Playbook from the dashboard
+1:30 - "Visibility is useful, but action matters. Each risky app comes with a remediation path."
+1:40 - "Shadow SaaS Detector gives IT teams visibility, prioritization, and action in one place."
+1:50 - Hold final screen for 2 seconds
 ```
 
 **Record using:** OBS Studio (free) or Screencastify

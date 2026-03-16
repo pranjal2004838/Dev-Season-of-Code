@@ -12,7 +12,6 @@ interface DashboardProps {
   setRevokedApps: React.Dispatch<React.SetStateAction<Set<string | number>>>;
 }
 
-type ConnectStep = 'idle' | 'connecting' | 'scanning' | 'done';
 type ConnectSource = 'google' | 'microsoft' | 'expense' | null;
 
 const mergeDetectedApps = (baseApps: DetectedApp[], incomingApps: DetectedApp[]): DetectedApp[] => {
@@ -44,9 +43,6 @@ export default function Dashboard({
   const [uploading, setUploading] = useState(false);
   const [selectedApp, setSelectedApp] = useState<DetectedApp | null>(null);
   const [showManualUpload, setShowManualUpload] = useState(false);
-  const [connectStep, setConnectStep] = useState<ConnectStep>('idle');
-  const [connectSource, setConnectSource] = useState<ConnectSource>(null);
-  const [scanProgress, setScanProgress] = useState(0);
   const expRef = useRef<HTMLInputElement>(null);
   const brRef = useRef<HTMLInputElement>(null);
 
@@ -94,46 +90,21 @@ export default function Dashboard({
     }
   };
 
-  // Fake OAuth connect flow — loads demo data under the hood
-  const handleConnect = useCallback(async (source: ConnectSource) => {
-    setConnectSource(source);
-    setConnectStep('connecting');
-    setScanProgress(0);
-
-    // Simulate OAuth handshake delay
-    await new Promise((r) => setTimeout(r, 1200));
-    setConnectStep('scanning');
-    showToast(`Connected to ${source === 'google' ? 'Google Workspace' : source === 'microsoft' ? 'Microsoft 365' : 'Expense System'}!`, 'success');
-
-    // Animate scan progress
-    for (let p = 0; p <= 100; p += 4) {
-      setScanProgress(p);
-      await new Promise((r) => setTimeout(r, 60));
+  const handleConnect = useCallback((source: ConnectSource) => {
+    if (source === 'google' || source === 'microsoft') {
+      showToast(
+        `${source === 'google' ? 'Google Workspace' : 'Microsoft 365'} OAuth is not configured yet. Use Slack OAuth or manual CSV/JSON upload.`,
+        'info'
+      );
+      setShowManualUpload(true);
+      return;
     }
-    setScanProgress(100);
 
-    try {
-      // Load demo data behind the scenes
-      const [expRes, brRes] = await Promise.all([
-        fetch('/test_data/expenses.csv'),
-        fetch('/test_data/browser_history.json'),
-      ]);
-      const expBlob = await expRes.blob();
-      const brBlob = await brRes.blob();
-      const expFile = new File([expBlob], 'expenses.csv', { type: 'text/csv' });
-      const brFile = new File([brBlob], 'browser_history.json', { type: 'application/json' });
-
-      const result = await uploadFiles(expFile, brFile);
-      const slackApps = await fetchSlackAppsSafe();
-      setDetectedApps(mergeDetectedApps(result.detectedApps, slackApps));
-      setConnectStep('done');
-      showToast(`🔍 Scanned ${source === 'google' ? 'Google Workspace' : source === 'microsoft' ? 'Microsoft 365' : 'Expense System'} — found ${result.totalApps} shadow SaaS apps!`, 'success');
-    } catch (err) {
-      showToast('Connection failed. Start backend and try again.', 'error');
-      console.error(err);
-      setConnectStep('idle');
+    if (source === 'expense') {
+      showToast('Expense systems require secure API/OAuth setup. Use manual CSV upload for now.', 'info');
+      setShowManualUpload(true);
     }
-  }, [setDetectedApps, fetchSlackAppsSafe]);
+  }, []);
 
   const handleRevoked = (appId: string | number) => {
     setRevokedApps((prev) => new Set(prev).add(appId));
@@ -185,8 +156,7 @@ export default function Dashboard({
               <p>Link your organization's platforms to automatically discover shadow SaaS across all employees</p>
             </div>
 
-            {connectStep === 'idle' && (
-              <>
+            <>
                 <div className="integrations-grid">
                   <button className="integration-card" onClick={() => handleConnect('google')} data-testid="connect-google">
                     <div className="integration-icon">
@@ -199,7 +169,7 @@ export default function Dashboard({
                     </div>
                     <div className="integration-info">
                       <strong>Google Workspace</strong>
-                      <span>Scan Gmail, Drive, Calendar & OAuth apps</span>
+                      <span>OAuth setup required (coming next) — no fake connection</span>
                     </div>
                     <span className="connect-arrow">→</span>
                   </button>
@@ -215,7 +185,7 @@ export default function Dashboard({
                     </div>
                     <div className="integration-info">
                       <strong>Microsoft 365</strong>
-                      <span>Scan Outlook, OneDrive, Teams & Azure AD</span>
+                      <span>OAuth setup required (coming next) — no fake connection</span>
                     </div>
                     <span className="connect-arrow">→</span>
                   </button>
@@ -226,7 +196,7 @@ export default function Dashboard({
                     </div>
                     <div className="integration-info">
                       <strong>Expense System</strong>
-                      <span>Connect Brex, Ramp, Expensify, or corporate cards</span>
+                      <span>Requires API integration; use CSV upload today</span>
                     </div>
                     <span className="connect-arrow">→</span>
                   </button>
@@ -297,36 +267,7 @@ export default function Dashboard({
                     </div>
                   </div>
                 )}
-              </>
-            )}
-
-            {/* Connecting / Scanning animation */}
-            {(connectStep === 'connecting' || connectStep === 'scanning') && (
-              <div className="connect-progress">
-                <div className="connect-progress-icon">
-                  {connectStep === 'connecting' ? (
-                    <div className="pulse-ring">🔐</div>
-                  ) : (
-                    <div className="pulse-ring">🔍</div>
-                  )}
-                </div>
-                <h3>
-                  {connectStep === 'connecting'
-                    ? `Authenticating with ${connectSource === 'google' ? 'Google Workspace' : connectSource === 'microsoft' ? 'Microsoft 365' : 'Expense System'}…`
-                    : 'Scanning organization for shadow SaaS…'}
-                </h3>
-                {connectStep === 'scanning' && (
-                  <div className="scan-progress-bar">
-                    <div className="scan-progress-fill" style={{ width: `${scanProgress}%` }} />
-                  </div>
-                )}
-                <p className="connect-sub">
-                  {connectStep === 'connecting'
-                    ? 'Establishing secure OAuth 2.0 connection…'
-                    : `Analyzing OAuth tokens, email receipts, SSO logs… ${scanProgress}%`}
-                </p>
-              </div>
-            )}
+            </>
           </div>
         </div>
       )}

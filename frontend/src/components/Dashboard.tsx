@@ -12,7 +12,7 @@ interface DashboardProps {
   setRevokedApps: React.Dispatch<React.SetStateAction<Set<string | number>>>;
 }
 
-type ConnectSource = 'google' | 'microsoft' | 'expense' | null;
+type ConnectSource = 'google' | 'microsoft' | 'expense' | 'slack' | null;
 
 const mergeDetectedApps = (baseApps: DetectedApp[], incomingApps: DetectedApp[]): DetectedApp[] => {
   const merged = new Map<string, DetectedApp>();
@@ -96,6 +96,12 @@ export default function Dashboard({
         `${source === 'google' ? 'Google Workspace' : 'Microsoft 365'} OAuth is not configured yet. Use Slack OAuth or manual CSV/JSON upload.`,
         'info'
       );
+      setShowManualUpload(true);
+      return;
+    }
+
+    if (source === 'slack') {
+      showToast('Slack OAuth is not configured yet. Use manual CSV/JSON upload to scan for shadow SaaS.', 'info');
       setShowManualUpload(true);
       return;
     }
@@ -201,7 +207,7 @@ export default function Dashboard({
                     <span className="connect-arrow">→</span>
                   </button>
 
-                  <a className="integration-card" href="/api/slack/auth" data-testid="connect-slack">
+                  <button className="integration-card" onClick={() => handleConnect('slack')} data-testid="connect-slack">
                     <div className="integration-icon">
                       <div style={{ fontSize: '2rem', lineHeight: 1 }}>💬</div>
                     </div>
@@ -210,7 +216,7 @@ export default function Dashboard({
                       <span>Authorize Slack and import installed apps live</span>
                     </div>
                     <span className="connect-arrow">→</span>
-                  </a>
+                  </button>
                 </div>
 
                 <div className="connect-divider">

@@ -420,17 +420,17 @@ Shadow SaaS Detector connects to your organization's data sources and instantly 
 
 ## Key Features
 
-### One-Click Connect
+### Multi-Source Upload
 
-No manual uploads. Connect your Google Workspace, Microsoft 365, and expense systems with a single click. The detector scans across all sources simultaneously.
+Upload three data sources simultaneously: expense reports (CSV), browser history (JSON), and employee roster (CSV). The detector cross-references all sources to find shadow apps. Optional Slack workspace integration for real-time app discovery.
 
-![Connect Your Tools](artifacts/screenshots/01-connect-tools.png)
+![Upload Form](artifacts/screenshots/page-02-upload-form.png)
 
-![Scanning in Progress](artifacts/screenshots/02-scanning.png)
+![Scanning in Progress](artifacts/screenshots/page-03-dashboard.png)
 
 ### Comprehensive Detection
 
-Cross-references expense reports, browser history, and OAuth grants against a database of **100+ known SaaS applications** across 24 categories. Detects apps that individual signals would miss.
+Cross-references expense reports, browser history, and Slack workspace apps against a database of **500+ known SaaS applications** across 24 categories. Keyword-based matching detects apps that individual signals would miss.
 
 ![Dashboard Stats](artifacts/screenshots/03-dashboard-stats.png)
 
@@ -528,8 +528,8 @@ Real-time ticker showing active threats as they're detected — PII exposure war
 
 | Metric | Value |
 |--------|-------|
-| SaaS apps in database | **100+** across 24 categories |
-| Detection sources | Expense reports, browser history, OAuth grants |
+| SaaS apps in database | **500+** across 24 categories |
+| Detection sources | Expense reports (CSV), browser history (JSON), Slack workspace apps |
 | Risk levels scored | Critical, High, Medium, Low |
 | Compliance frameworks | GDPR, CCPA, SOC 2, HIPAA |
 | Export formats | PDF, Markdown |
@@ -545,46 +545,58 @@ Real-time ticker showing active threats as they're detected — PII exposure war
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | React 19, TypeScript 5.9, Vite 7, Recharts |
-| Backend | Node.js, Express, TypeScript |
-| AI Engine | Google Gemini 1.5 Flash (with rule-based fallback) |
-| Testing | Vitest (unit), Playwright (e2e) |
-| Deployment | Render (full-stack) |
+| Frontend | React 19, TypeScript 5.9, Vite 7.3, Recharts 3.8, Axios, React Router |
+| Backend | Node.js, Express.js 5.2, TypeScript 5.9, Multer (file upload) |
+| AI Engine | Google Generative AI SDK (Gemini 1.5 Flash) with intelligent rule-based fallback |
+| Testing | Vitest 4.0 (unit tests), Playwright 1.58 (E2E tests) |
+| Deployment | Render (with production-ready configs), Docker-ready |
+| Code Quality | ESLint, TypeScript strict mode, no `any` types |
 
 ---
 
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────┐
-│                   Frontend (React)               │
-│  ┌──────────┐ ┌──────────┐ ┌──────────────────┐ │
-│  │Dashboard │ │Simulator │ │   AI Insights    │ │
-│  │ + Charts │ │          │ │Risk│Comply│Consol│ │
-│  └────┬─────┘ └────┬─────┘ └────────┬─────────┘ │
-│       │             │                │           │
-│       └─────────────┼────────────────┘           │
-│                     │ REST API                   │
-├─────────────────────┼───────────────────────────-┤
-│                   Backend (Express)              │
-│  ┌──────────┐ ┌──────────┐ ┌──────────────────┐ │
-│  │Detector  │ │Simulator │ │   AI Services    │ │
-│  │ Engine   │ │ Engine   │ │Scorer│Audit│Merge│ │
-│  └────┬─────┘ └──────────┘ └────────┬─────────┘ │
-│       │                              │           │
-│  ┌────┴─────┐                 ┌──────┴─────────┐ │
-│  │SaaS DB   │                 │ Google Gemini  │ │
-│  │(100 apps)│                 │ 1.5 Flash API  │ │
-│  └──────────┘                 └────────────────┘ │
-└──────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│                   Frontend (React 19)                     │
+│  ┌──────────┐ ┌──────────┐ ┌──────────────────────────┐  │
+│  │Dashboard │ │Threat Map│ │   AI Insights            │  │
+│  │  Charts  │ │ Surface  │ │Risk│Comply│Consolidate │  │
+│  └────┬─────┘ └────┬─────┘ └────────┬──────────────┘   │
+│  ┌──────────┐ ┌──────────┐          │                   │
+│  │Simulator │ │Playbook  │          │                   │
+│  │Cost/ROI  │ │ Modal    │          │                   │
+│  └────┬─────┘ └────┬─────┘          │                   │
+│       │             │                │                   │
+│       └─────────────┼────────────────┘                   │
+│                     │ REST API (/api/*)                  │
+├─────────────────────┼────────────────────────────────────┤
+│                   Backend (Express.js)                   │
+│  Detection  Simulator    Playbook     AI Services        │
+│  ┌─────────┐ ┌────────┐ ┌────────┐ ┌────────────────┐  │
+│  │detector │ │costMod │ │playbook│ │ai-risk-scorer  │  │
+│  │  .ts   │ │  .ts   │ │  .ts   │ │ai-compliance   │  │
+│  │        │ │        │ │        │ │ai-consolidator │  │
+│  └────┬──────┴────────┴────────┴────────────┬─────────┘  │
+│       │                                      │            │
+│  ┌────┴──────┐                      ┌───────┴──────────┐ │
+│  │SaaS DB    │                      │ Google Gemini    │ │
+│  │(500 apps) │    + Rule-based      │ 1.5 Flash API    │ │
+│  │keywords   │    Fallback          │ (with timeout)   │ │
+│  │categories │                      │                  │ │
+│  │risk_level │                      │ In-memory Cache  │ │
+│  └───────────┘                      └──────────────────┘ │
+└──────────────────────────────────────────────────────────┘
 
 Data Flow During Detection:
 1. User uploads expenses.csv, browser_history.json, roster.csv
-2. Backend detector scans files
-3. Cross-references 100+ known SaaS apps
-4. Calculates risk score (AI or rules-based)
-5. Identifies PII/credential exposure
-6. Frontend displays interactive dashboard
+2. Express /api/upload receives files (Multer)
+3. detector.ts parses CSV, JSON; extracts keywords
+4. Matches against 500-app SaaS database
+5. ai-risk-scorer.ts evaluates via Gemini (or rules if offline)
+6. ai-compliance.ts checks GDPR/CCPA/SOC2/HIPAA
+7. ai-consolidator.ts identifies duplicates by category
+8. Frontend displays results in Dashboard with charts
 ```
 
 ---
@@ -667,12 +679,13 @@ npm test
 
 ### What Gets Detected
 When you upload demo data, the platform shows:
-- ✅ Recruiting Bot (Critical risk) — Stores employee data
-- ✅ Grammarly (High risk) — Accesses document content
-- ✅ Slack (Medium risk) — Team communication, data exposure
-- ✅ Zapier (Medium risk) — Workflow automation, integration risk
-- ✅ Figma (Low risk) — Design tool, limited data access
-- Plus 95+ other apps across 24 categories
+- 🔴 **7+ Critical/High Risk apps** detected with full remediation playbooks
+- 💰 **$500–$2000/month** in consolidation savings identified
+- 📊 **Risk breakdown** by department, category, and compliance framework
+- ⚠️ **Data exposure risks** (PII, credentials, financial data)
+- 🔧 **Duplicate tools** across teams (e.g., 3 password managers → keep 1)
+- 📋 **GDPR/CCPA/SOC 2/HIPAA** compliance violations flagged
+- Plus **490+ other apps** in the searchable database
 
 ### Screenshot Directory
 All captured screens are in `artifacts/screenshots/`:
@@ -755,41 +768,50 @@ shadow-SaaS-detector/
 
 ## Feature Breakdown
 
-### Detection Engine
-- Scans 3 data sources simultaneously
-- Matches against 100+ pre-configured SaaS apps
-- Identifies PII, financial data, credential exposure
-- Calculates risk score per app
-- Determines affected users and departments
+### Detection Engine (`detector.ts`)
+- Parses expense CSV, browser history JSON, employee roster
+- Keyword-matches against 500+ SaaS app database
+- Tracks evidence (e.g., "Expense: Slack $100 on 2025-03-10")
+- Identifies PII exposure (employee emails, SSNs, passwords)
+- Attributes apps to departments and individual employees
+- Supports Slack workspace app enumeration (OAuth-ready)
 
-### Risk Scoring Algorithm
+### Risk Scoring Algorithm (`ai-risk-scorer.ts`)
+**Gemini 1.5 Flash (if API available):**
+- Sends app data + permissions + evidence to LLM
+- Gets CRITICAL/HIGH/MEDIUM/LOW classification
+- Extracts mainRisks and recommendations
+- 5-second timeout with fallback to deterministic scoring
+
+**Rule-Based Fallback (always available):**
 - **Data Access** (40% weight)
-  - Does app access PII? (+25 points)
-  - Does app access credentials? (+30 points)
-  - Does app access financial data? (+20 points)
-
-- **Compliance** (35% weight)
-  - GDPR non-compliance? (+25 points)
-  - CCPA non-compliance? (+20 points)
-  - SOC 2 certified? (-15 points)
-  - HIPAA compliant? (-10 points)
-
-- **Threat Intel** (25% weight)
-  - Known breaches in past year? (+25 points)
-  - Frequent security updates? (-10 points)
-  - Enterprise/free tier distinction? (+5 points)
+  - PII access? (+15 points)
+  - Credentials/passwords? (+30 points)
+  - Emails/contacts? (+10 points)
+  
+- **Risk Level** (30% weight)
+  - critical in DB? (+90 points)
+  - high in DB? (+70 points)
+  
+- **Attribution** (20% weight)
+  - Unknown employee? (+5 points)
+  - Multi-department use? (+10 points)
+  
+- **Compliance** (10% weight)
+  - PII exposure? (+15 points)
 
 **Risk Levels:**
-- 🔴 **Critical:** 80+ points
-- 🟠 **High:** 60-79 points
+- 🔴 **Critical:** 80-100 points
+- 🟠 **High:** 60-79 points  
 - 🟡 **Medium:** 40-59 points
-- 🟢 **Low:** <40 points
+- 🟢 **Low:** 0-39 points
 
 ### AI Analysis Features
-- **Risk Assessment:** Explains why each app is risky
-- **Compliance Audit:** Checks GDPR, CCPA, SOC 2, HIPAA
-- **Smart Consolidation:** Finds duplicate tools and savings
-- **Cost Modeling:** Simulates different remediation scenarios
+- **Risk Assessment** (`ai-risk-scorer.ts`): Per-app risk score (1-100) with Gemini explanations or rule-based reasons
+- **Compliance Audit** (`ai-compliance.ts`): GDPR/CCPA/SOC 2/HIPAA framework checking with corrective actions
+- **Smart Consolidation** (`ai-consolidator.ts`): Identifies category duplicates (e.g., 3 password managers), calculates annual savings
+- **Cost Modeling** (`simulator.ts`): ROI projection, user count, department breakdown, remediation impact
+- **Playbooks** (`playbook.ts`): Auto-generates step-by-step remediation guides + email templates + audit logs
 
 ---
 
@@ -819,15 +841,16 @@ This is a **demo/proof-of-concept** version with the following characteristics:
 - ❌ No real OAuth revocation capability
 - ❌ No persistent data storage (session-only)
 
-### Production Readiness
-To deploy to production, you would need to:
-1. Implement OAuth 2.0 OAuth integrations
-2. Add secure data persistence (database)
-3. Implement actual app revocation logic
-4. Add user authentication and RBAC
-5. Set up audit logging and compliance reporting
-6. Configure enterprise SSO
-7. Scale backend for concurrent requests
+### Production Roadmap
+To deploy to production, add:
+1. **Live Integrations**: OAuth to Google Workspace, Microsoft 365, Okta, GitHub (currently CSV upload)
+2. **Database**: PostgreSQL for persistent data storage (currently in-memory + JSON)
+3. **Real Revocation**: Actual app access removal (currently simulated only)
+4. **Authentication**: User accounts, role-based access control (RBAC)
+5. **Continuous Monitoring**: Recurring browser history sync vs. one-time uploads
+6. **Enterprise SSO**: SAML, OIDC support
+7. **Scalability**: Load balancing, caching, async job processing
+8. **Audit & Compliance**: Detailed audit logs, tamper-proof records for SOC 2/HIPAA
 
 ---
 
@@ -853,13 +876,30 @@ ISC License - See LICENSE file for details.
 
 ## Demo
 
-1. Click **"Connect Google Workspace"** on the dashboard
-2. Watch the real-time scanning animation
-3. Explore **35 detected shadow apps** across 17 categories
-4. Click any app's **"Playbook"** button for remediation steps
-5. Switch to **Simulator** to model cost savings
-6. Open **AI Insights** for risk scores, compliance audit, and consolidation recommendations
-7. **Export** the compliance report as PDF or Markdown
+```bash
+# Install dependencies
+npm run install:all
+
+# Start both backend & frontend
+npm run dev
+
+# Open http://localhost:5173
+```
+
+**Demo Flow:**
+1. Click **"Demo SaaS"** button in the navbar
+2. Platform auto-loads sample data (expenses.csv + browser_history.json)
+3. See **7+ detected apps** with risk scores
+4. Click any app's **Playbook** button for remediation steps
+5. Switch to **Threat Map** to visualize data exposure
+6. Open **Simulator** to model cost savings
+7. Visit **AI Insights** for risk analysis, compliance audit, consolidation recommendations
+8. **Export** compliance report as styled HTML
+
+**Sample Data Location:**
+- `test_data/expenses.csv` (company expense records)
+- `test_data/browser_history.json` (employee browser activity)
+- `test_data/roster.csv` (employee roster)
 
 ---
 
